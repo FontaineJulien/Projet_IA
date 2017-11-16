@@ -29,7 +29,7 @@ public class Rule {
 	
 	public String toString(){
 		
-		String s = antecedents.toString()+" => "+consequence;
+		String s = antecedents.toString()+" => "+consequence.replace("_", " ");
 		return s;
 	}
 	

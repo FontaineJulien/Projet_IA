@@ -12,12 +12,17 @@ import java.util.Map.Entry;
  * 	On lui passe le nom du fichier de règles placé à la racine du projet.
  * 	Ensuite, on lui passe la base de connaissance sur laquelle on veut partir
  * 	pour inférer.
- * 	Ex : Moteur m = new Moteur("regles.txt","Serie","Gore");
- * 		 Moteur m = new Moteur("regles.txt","Film","SF","Bataille","Magie","Chevalier");
+ * 	Ex : Moteur m1 = new Moteur("regles.txt","Serie","Gore");
+ * 		 Moteur m2 = new Moteur("regles.txt","Film","SF","Bataille","Magie","Chevalier");
+ * 		 Moteur m3 = new Moteur("regles.txt","Medieval");
  * 
  * 	On choisit la méthode d'inférence que l'on veut :
- * 		- Chaînage avant : m.forward(String goal);
+ * 		- Chaînage avant en profondeur : m.deepForward(String goal_1, String goal_2, ... ,goal_N);
+ * 		- Chaînage avant en largeur : m.wideForward(String goal_1, String goal_2, ... ,goal_N);
  * 		- Chaînage arrière : m.backward(String goal_1, String goal_2, ... ,goal_N );
+ * Ex : m1.deepForward("The_Walking_Dead");
+ * 		m2.wideForward("Star_Wars");
+ * 		m3.backward("Jedi");
  * 
  *  Resultat : true si le but est atteint, false sinon
  * 
@@ -38,10 +43,8 @@ import java.util.Map.Entry;
  * 
  * TODO : Implémenter l'inférence par paquet de règles
  * TODO : Implémenter les fonctionnalités du moteur (voir sujet du projet)
- * TODO : Documenter et commenter le code
  * TODO : Interface graphique
  * TODO : Cohérence
- * TODO : Chainage avant largeur
  * TODO : Convertire le fichier de règles au format XML
  * 
  */
@@ -64,19 +67,93 @@ public class Moteur {
 	/*
 	 * Chainage avant profondeur
 	 */
-	public boolean forward(String... goals){
+	public boolean deepForward(String... goals){
 		history.clear();
 		List<String> goals_list = Arrays.asList(goals);
 		goals_list = Util.toLowerCaseList(goals_list);
-		return forward(goals_list);
+		return deepForward(goals_list);
 	}
 	
-	private boolean forward(List<String> goals){
+	private boolean deepForward(List<String> goals){
 		ArrayList<Boolean> activable = initActivable(); // Permet de savoir si la regle i a deja été activée => Une règle se déclenche au plus une fois
 		boolean inf = true; // Permet de savoir si une inférence a été effectuée
-		boolean dec = true; // Permet de savoir si la règle courrante est déclenchable
+		boolean dec; // Permet de savoir si la règle courrante est déclenchable
 		boolean goal_reached=false; // Permet de savoir de savoir si le but donné à été atteint
-		int nb_inf = 0; // Nombre d'inférence effectuées
+		int nb_inf = 1; // Nombre d'inférence effectuées
+		
+		Iterator<Entry<Integer, Rule>> it_rule; // Iterateur sur les règles
+		Entry<Integer, Rule> rule;
+		
+		Iterator<String> it_antecedents; // Iterateur sur les antécédents
+		int rule_index;
+		String antecedent;
+		String consequence;
+		
+		Iterator<String> it_goals;
+		String goal;
+		
+		while(inf && !goal_reached){ // Tant qu'on infère et que le but donné n'est pas atteint
+			
+			inf = false;
+			dec = false;
+			it_rule = BR.iterator();
+			
+			while(it_rule.hasNext() && dec == false){ // Itération sur les règles
+				
+				rule = it_rule.next();
+				
+				if(activable.get(rule.getKey())){ // La règles a-t-elle dejà été validée ?
+					dec = true;
+					it_antecedents = rule.getValue().iterator();
+					
+					while(it_antecedents.hasNext() && dec){ // Vérification des antécédents de la règle dans la  base de faits
+						antecedent = it_antecedents.next();
+						if(!BF.contains(antecedent)) // Si l'antécédent n'appartient pas à la base de faits
+							dec = false; // La règle n'est pas déclenchable
+					}
+					
+					if(dec){ // Si la règle est déclenchable
+						consequence = rule.getValue().getconsequence();
+						rule_index = rule.getKey();
+						BF.add(consequence); // On ajoute la conséquence de la règles dans la base de faits
+						activable.set(rule_index, false); // On bloque l'activation de cette règle dans les (éventuelles) prochaines inférences
+						inf = true;
+						history.add(new Inference(nb_inf, rule.getValue())); // On ajoute la règle dans l'historique des inférences
+
+						it_goals =  goals.iterator();
+						goal_reached = true;
+						while(goal_reached && it_goals.hasNext()){
+							goal = it_goals.next();
+							if(!BF.contains(goal))
+								goal_reached = false;
+						}
+					}
+				}
+			}
+			
+			nb_inf++;
+		}
+		
+		return goal_reached;
+	}
+	
+	
+	/*
+	 * Chaînage avant largeur
+	 */
+	public boolean wideForward(String... goals){
+		history.clear();
+		List<String> goals_list = Arrays.asList(goals);
+		goals_list = Util.toLowerCaseList(goals_list);
+		return wideForward(goals_list);
+	}
+	
+	private boolean wideForward(List<String> goals){
+		ArrayList<Boolean> activable = initActivable(); // Permet de savoir si la regle i a deja été activée => Une règle se déclenche au plus une fois
+		boolean inf = true; // Permet de savoir si une inférence a été effectuée
+		boolean dec; // Permet de savoir si la règle courrante est déclenchable
+		boolean goal_reached=false; // Permet de savoir de savoir si le but donné à été atteint
+		int nb_inf = 1; // Nombre d'inférence effectuées
 		
 		Iterator<Entry<Integer, Rule>> it_rule; // Iterateur sur les règles
 		Entry<Integer, Rule> rule;
@@ -96,16 +173,16 @@ public class Moteur {
 			
 			while(it_rule.hasNext()){ // Itération sur les règles
 				
-				dec = true;
 				rule = it_rule.next();
 				
 				if(activable.get(rule.getKey())){ // La règles a-t-elle dejà été validée ?
+					dec = true;
 					it_antecedents = rule.getValue().iterator();
 					
 					while(it_antecedents.hasNext() && dec){ // Vérification des antécédents de la règle dans la  base de faits
 						antecedent = it_antecedents.next();
-							if(!BF.contains(antecedent)) // Si l'antécédent n'appartient pas à la base de faits
-								dec = false; // La règle n'est pas déclenchable
+						if(!BF.contains(antecedent)) // Si l'antécédent n'appartient pas à la base de faits
+							dec = false; // La règle n'est pas déclenchable
 					}
 					
 					if(dec){ // Si la règle est déclenchable
@@ -114,8 +191,7 @@ public class Moteur {
 						BF.add(consequence); // On ajoute la conséquence de la règles dans la base de faits
 						activable.set(rule_index, false); // On bloque l'activation de cette règle dans les (éventuelles) prochaines inférences
 						inf = true;
-						nb_inf++;
-						history.put(nb_inf, rule.getValue()); // On ajoute la règle dans l'historique des inférences
+						history.add(new Inference(nb_inf, rule.getValue())); // On ajoute la règle dans l'historique des inférences
 
 						it_goals =  goals.iterator();
 						goal_reached = true;
@@ -127,6 +203,8 @@ public class Moteur {
 					}
 				}
 			}
+			
+			nb_inf++;
 		}
 		
 		return goal_reached;

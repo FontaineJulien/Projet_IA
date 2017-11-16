@@ -1,9 +1,8 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
 
 
-public class History extends HashMap<Integer, Rule> {
+public class History extends ArrayList<Inference> {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -12,14 +11,10 @@ public class History extends HashMap<Integer, Rule> {
 	}
 	
 	public void display(){
-		Set<Entry<Integer, Rule>> set = this.entrySet();
-		Iterator<Entry<Integer, Rule>> it = set.iterator();
+		Iterator<Inference> it_inference = this.iterator();
 		
-		Entry<Integer, Rule> rule;
-		
-		while(it.hasNext()){
-			rule = it.next();
-			System.out.println("Inférence n°"+rule.getKey()+" : "+rule.getValue().toString().replace('_', ' '));
+		while(it_inference.hasNext()){
+			it_inference.next().display();
 		}
 	}
 }
