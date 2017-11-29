@@ -42,10 +42,11 @@
 </categorie>
 </regles>
 <faits>
-<fait value="true">chevalier</fait>
 <fait value="true">magie</fait>
+<fait value="true">chevalier</fait>
+<fait value="true">bataille</fait>
+<fait value="true">force</fait>
 <fait value="true">film</fait>
 <fait value="true">vaisseau</fait>
-<fait value="true">bataille</fait>
 </faits>
 </System>
