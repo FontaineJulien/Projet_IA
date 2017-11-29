@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<System><regles>
+<categorie value="SF">
+</categorie>
+</regles>
+<faits>
+<fait value="true">zizi</fait>
+</faits>
+</System>

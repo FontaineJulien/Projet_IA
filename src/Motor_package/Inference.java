@@ -1,3 +1,4 @@
+package Motor_package;
 
 public class Inference {
 	
@@ -11,5 +12,9 @@ public class Inference {
 	
 	public void display(){
 		System.out.println("Inférence n°"+inference_number+" : "+rule.toString());
+	}
+	
+	public String ToString(){
+		return "Inférence n°"+inference_number+" : "+rule.toString();
 	}
 }

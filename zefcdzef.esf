@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<System><regles>
+<categorie value="SF">
+<regle>
+<antecedents>
+<antecedent value="true">azdxs</antecedent>
+</antecedents>
+<consequences>
+<consequence value="true">r'"zef</consequence>
+</consequences>
+</regle>
+</categorie>
+</regles>
+<faits>
+<fait value="true">di</fait>
+</faits>
+</System>

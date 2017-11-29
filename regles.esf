@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<System><regles>
+<categorie value="SF">
+<regle>
+<antecedents>
+<antecedent value="true">magie</antecedent>
+</antecedents>
+<consequences>
+<consequence value="true">force</consequence>
+</consequences>
+</regle>
+<regle>
+<antecedents>
+<antecedent value="true">chevalier</antecedent>
+<antecedent value="true">force</antecedent>
+</antecedents>
+<consequences>
+<consequence value="true">jedi</consequence>
+<consequence value="true">sith</consequence>
+</consequences>
+</regle>
+<regle>
+<antecedents>
+<antecedent value="true">bataille</antecedent>
+<antecedent value="true">vaisseau</antecedent>
+</antecedents>
+<consequences>
+<consequence value="true">bataille_spatiale</consequence>
+</consequences>
+</regle>
+<regle>
+<antecedents>
+<antecedent value="true">film</antecedent>
+<antecedent value="true">jedi</antecedent>
+<antecedent value="true">bataille_spatiale</antecedent>
+<antecedent value="true">force</antecedent>
+</antecedents>
+<consequences>
+<consequence value="true">star_wars</consequence>
+</consequences>
+</regle>
+</categorie>
+</regles>
+<faits>
+<fait value="true">chevalier</fait>
+<fait value="true">magie</fait>
+<fait value="true">film</fait>
+<fait value="true">vaisseau</fait>
+<fait value="true">bataille</fait>
+</faits>
+</System>
