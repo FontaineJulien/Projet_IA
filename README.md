@@ -26,3 +26,14 @@ Utilisation:
   Note : "m.displayHistory();" n'affichera rien dans le cas d'un chaînage arrière;
   
   Syntaxe du fichier de la base de règle : <antecedent> & <antecedent> & ... & <antecedent> -> <consequence>
+  
+  
+  
+  
+  
+  
+  <h1> À FAIRE </h1>
+  <p>Vérifier que l'ajout de règle est bien unique</p>
+  <p>Ajouter un sélecteur de catégorie pour l'ajout d'une règle</p>
+  <p>Ajouter un sélecteur de catégorie pour le test de mots, proposer un choix "toutes".</p>
+  <p>Modifier les appels au moteur dans le controller pour le test de mot</p>

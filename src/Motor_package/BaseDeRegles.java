@@ -145,8 +145,12 @@ public class BaseDeRegles extends HashMap<Integer, Rule> {
     public Rule AddRule( ArrayList<Fait> current_antecedents, ArrayList<Fait> current_consequences,
             ArrayList<String> Categorie ) {
         Rule rule = new Rule( current_antecedents, current_consequences, "" );
-        this.put( this.size(), rule );
-        return rule;
+        if(! this.containsValue(rule))
+        	{this.put( this.size(), rule );
+        	return rule;
+        	}
+        else 
+        	return null;
     }
 
     /*
@@ -195,7 +199,7 @@ public class BaseDeRegles extends HashMap<Integer, Rule> {
      * 
      * @return
      */
-    public ArrayList<String> getRegles_ToListString() {
+    public ArrayList<String> toListString() {
         ArrayList<String> liste = new ArrayList<String>();
         Iterator<Entry<Integer, Rule>> it = this.iterator();
         Entry<Integer, Rule> rule;

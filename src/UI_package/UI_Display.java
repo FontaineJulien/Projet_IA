@@ -16,7 +16,7 @@ public class UI_Display extends JInternalFrame {
   public JScrollPane[] scrollTab;
   
   
-  public static enum PANEL { RESULT, RULE, FACT };
+  public static enum PANEL { RESULT, RULE, FACT, CATEGORY };
   
   /**
    * CONSTRUCTEUR
@@ -25,17 +25,13 @@ public class UI_Display extends JInternalFrame {
     this.setSize(400, 200);
     
      
-    //Création de plusieurs Panneau
-    this.tPan = new Panneau[3];
-    this.tPan[0] = new Panneau(Color.white,Color.black);
-    this.tPan[1] = new Panneau(Color.white,Color.black);
-    this.tPan[2] = new Panneau(Color.white,Color.black);
-    
-    //Création des JScrollPane
-    this.scrollTab = new JScrollPane[3];
-    this.scrollTab[0] = new JScrollPane(tPan[0]);
-    this.scrollTab[1] = new JScrollPane(tPan[1]);
-    this.scrollTab[2] = new JScrollPane(tPan[2]);
+    //Création des panneaux
+    this.tPan = new Panneau[4];
+    this.scrollTab = new JScrollPane[4];
+    for(int i=0;i<tPan.length;i++){
+        this.tPan[i] = new Panneau(Color.white,Color.black);
+        this.scrollTab[i] = new JScrollPane(tPan[i]);
+    }
     
       
     //Création de notre conteneur d'onglets
@@ -49,10 +45,9 @@ public class UI_Display extends JInternalFrame {
 	onglet.add("Résultats", scrollTab[0]);
 	onglet.add("Règles", scrollTab[1]);
 	onglet.add("Faits", scrollTab[2]);
+	onglet.add("Catégories",scrollTab[3]);
   
     //On passe ensuite les onglets au content pane
-	
-	
     this.add(onglet);
     this.setVisible(true);
    
@@ -79,6 +74,9 @@ public class UI_Display extends JInternalFrame {
 		  case FACT : 
 			  this.tPan[2].addText(str);
 			  break;
+		  case CATEGORY : 
+			  this.tPan[3].addText(str);
+			  break;
 		  default: 
 			  
 			  break;
@@ -96,6 +94,9 @@ public class UI_Display extends JInternalFrame {
 			  break;
 		  case FACT : 
 			  this.tPan[2].addTextInLine(str);
+			  break;
+		  case CATEGORY : 
+			  this.tPan[3].addTextInLine(str);
 			  break;
 		  default: 
 			  
@@ -132,6 +133,7 @@ public class UI_Display extends JInternalFrame {
 	  case RESULT:this.tPan[0].setText(txt);break;
 	  case RULE:this.tPan[1].setText(txt);break;
 	  case FACT:this.tPan[2].setText(txt);break;
+	  case CATEGORY:this.tPan[3].setText(txt);break;
 	  default:break;
 	  }
   }
@@ -144,6 +146,7 @@ public class UI_Display extends JInternalFrame {
 	  case RESULT:this.onglet.setSelectedIndex(0);break;
 	  case RULE:this.onglet.setSelectedIndex(1);break;
 	  case FACT:this.onglet.setSelectedIndex(2);break;
+	  case CATEGORY:this.onglet.setSelectedIndex(3);break;
 	  default:break;
 	  }
   }
@@ -152,9 +155,9 @@ public class UI_Display extends JInternalFrame {
    * efface le contenu des pannels
    */
   public void clearPanels(){
-	  this.tPan[0].setText("");
-	  this.tPan[1].setText("");
-	  this.tPan[2].setText("");
+	  for(Panneau pan : tPan){
+		  pan.setText("");
+	  }
   }
   
   /**
@@ -162,9 +165,10 @@ public class UI_Display extends JInternalFrame {
    * @param pan_style
    */
   public void setPanelsStyle(Panneau.PANSTYLE pan_style){
-	  for(int i=0;i<this.onglet.getComponentCount();i++)
-		  if(this.tPan[i].isShowing())
-			  this.tPan[i].setPanStyle(pan_style);
+	  for(Panneau pan : tPan){
+		  if(pan.isShowing())
+			  pan.setPanStyle(pan_style);
+	  }
   }
   
   /**
@@ -172,27 +176,30 @@ public class UI_Display extends JInternalFrame {
    * @param f_size
    */
   public void setPanelsFontSize(Panneau.FONTSIZE f_size){
-	  for(int i=0;i<this.onglet.getComponentCount();i++)
-		  if(this.tPan[i].isShowing())
-			  this.tPan[i].setFontSize(f_size);
+	  for(Panneau pan : tPan){
+		  if(pan.isShowing())
+			  pan.setFontSize(f_size);
+	  }
   }
 
   /**
    * Augmente la police du pannel affiché
    */
   public void increaseFontSize(){
-	  for(int i=0;i<this.onglet.getComponentCount();i++)
-		  if(this.tPan[i].isShowing())
-			  this.tPan[i].setFontSize(this.tPan[i].getFontSize()+1);
+	  for(Panneau pan : tPan){
+		  if(pan.isShowing())
+			  pan.setFontSize(pan.getFontSize()+1);
+	  }
   }
   
   /**
    * Réduit la police du pannel affiché
    */
   public void decreaseFontSize(){
-	  for(int i=0;i<this.onglet.getComponentCount();i++)
-		  if(this.tPan[i].isShowing())
-			  this.tPan[i].setFontSize(this.tPan[i].getFontSize()-1);
+	  for(Panneau pan : tPan){
+		  if(pan.isShowing())
+			  pan.setFontSize(pan.getFontSize()-1);
+	  }
   }
   
 }//end CLASS

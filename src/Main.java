@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+import Controller_package.Controller;
 import Motor_package.Categorie;
 import Motor_package.Fait;
 import Motor_package.Moteur;
@@ -18,8 +19,8 @@ public class Main {
          * sauvegarde, ET SURTOUT dzns le moteur.
          */
 
-        // *
-        // new Controller();
+        //*
+         new Controller();
 
         /**/
         Moteur m = new Moteur( "regles.esf", new Fait( "Magie", true ));

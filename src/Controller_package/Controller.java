@@ -43,8 +43,6 @@ public class Controller implements ActionListener {
 		//on instancie le moteur et la vue
 		moteur = new Moteur();
 		ui = new UI_Expert_System();
-		
-		
 		this.configureUI_Expert_System();
 	}
 	
@@ -54,14 +52,11 @@ public class Controller implements ActionListener {
 	 * AJOUT DES LISTENERS SUR LES ELEMENTS DE L'INTERFACE GRAPHIQUE
 	 */
 	private void configureUI_Expert_System(){
-		//ajout du listener sur le bouton ajouter du module "panel_Add_Fact"
-		this.ui.panel_Add_Fact.getButton_Add().addActionListener(this);
-		//ajout du listener sur le bouton ajouter du module "panel_Add_Rule"
-		this.ui.panel_Add_Rule.getButton_Add().addActionListener(this);
-		//ajout du listener sur le bouton effacer du module "panel_Add_Rule"
-		this.ui.panel_Add_Rule.getButton_Del().addActionListener(this);
-		//ajout du listener sur le bouton TESTER du module "panel_Input"
-		this.ui.panel_Input.getButton_Enter().addActionListener(this);
+		this.ui.panel_Add_Fact.getButton_Add().addActionListener(this);	//bouton ajouter du module "panel_Add_Fact"
+		this.ui.panel_Add_Rule.getButton_Add().addActionListener(this);	//bouton ajouter du module "panel_Add_Rule"
+		this.ui.panel_Add_Rule.getButton_Del().addActionListener(this);	//bouton effacer du module "panel_Add_Rule"
+		this.ui.panel_Add_Category.getButton_Add().addActionListener(this);	//bouton effacer du module "panel_Add_Category"
+		this.ui.panel_Test.getButton_Enter().addActionListener(this);	//bouton TESTER du module "panel_Input"
 		
 		
 		//ajout du listener sur le bouton load systeme du menu
@@ -84,13 +79,17 @@ public class Controller implements ActionListener {
 		//MODULE AJOUT FAIT
 		if(arg0.getSource()==this.ui.panel_Add_Fact.getButton_Add())//bouton ajouter du module "panel_Add_Fact"
 			this.AddFactButtonPressed();
+		//MODULE AJOUT CATEGORIE
+		if(arg0.getSource()==this.ui.panel_Add_Category.getButton_Add())//bouton ajouter du module "panel_Add_Category"
+			this.AddCategoryButtonPressed();
+		
 	//MODULE AJOUT RÈGLE
 		if(arg0.getSource()==this.ui.panel_Add_Rule.getButton_Add())//bouton ajouter du module "panel_Add_Rule"
 			this.AddRuleButtonPressed();
 		if(arg0.getSource()==this.ui.panel_Add_Rule.getButton_Del())//efface les tableaux du module
 			this.ui.panel_Add_Rule.clearAllTexts();
 	//MODULE INPUT
-		if(arg0.getSource()==this.ui.panel_Input.getButton_Enter())//bouton TESTER du module "panel_Input"
+		if(arg0.getSource()==this.ui.panel_Test.getButton_Enter())//bouton TESTER du module "panel_Input"
 			this.TestButtonPressed();
 		
 	//BOUTON MENU
@@ -182,10 +181,12 @@ public class Controller implements ActionListener {
 	 * @param newFact
 	 * @return String -> le mot ajouté si succès, "erreur" sinon.
 	 */
-	public String addNewFact(String newFact){
-		if(this.moteur.AddFact(newFact))
-			return newFact;
-		else return "erreur";		
+	public boolean addNewFact(String newFact){
+		return (this.moteur.AddFact(newFact));		
+	}
+	
+	public boolean addNewCategory(String newCategory){
+		return this.moteur.AddCategory(newCategory);
 	}
 	
 	/**
@@ -201,6 +202,10 @@ public class Controller implements ActionListener {
 		//on récupère les string des textarea du panneau newRule
 		String[] premisses_array = premisses.split("\n");
 		String[] consequence_array = consequences.split("\n");
+		for(String str : premisses_array)
+			str=str.trim();
+		for(String str : consequence_array)
+			str=str.trim();
 		//String[] categorie_array = null;
 		
 		//on demande au moteur d'ajouter la règle
@@ -225,15 +230,17 @@ public class Controller implements ActionListener {
 			return false;
 		
 		
+		
 		//ET on met à jour le panneau d'affichage des règles.
 		List<String> list_regles = this.moteur.getAllRules_StringFormat();
 		List<String> list_faits = this.moteur.getAllFacts_StringFormat();
-		for(int i=0;i<list_regles.size();i++){
-			this.ui.panel_Display.addText_Panel(list_regles.get(i), PANEL.RULE);
-		}
-		for(int i=0;i<list_faits.size();i++){
-			this.ui.panel_Display.addText_Panel(list_faits.get(i), PANEL.FACT);
-		}
+		List<String> list_categories = this.moteur.getAllCategories_StringFormat();
+		for(String rule : list_regles)
+			this.ui.panel_Display.addText_Panel(rule, PANEL.RULE);
+		for(String fact : list_faits)
+			this.ui.panel_Display.addText_Panel(fact, PANEL.FACT);
+		for(String cat : list_categories)
+			this.ui.panel_Display.addText_Panel(cat,PANEL.CATEGORY);
 		return true;
 	}
 	
@@ -284,27 +291,40 @@ public class Controller implements ActionListener {
 	 * Gère l'ajout d'un NOUVEAU FAIT
 	 */
 	private void AddFactButtonPressed(){
-		String new_fact = this.ui.panel_Add_Fact.getText_NewFact();	//on récupère le fait à ajouter depuis l'interface
-		if(new_fact==null || new_fact.length()==0)
+		String new_fact = this.ui.panel_Add_Fact.getText();	//on récupère le fait à ajouter depuis l'interface
+		if(new_fact==null || new_fact.trim().length()==0)
 			return;
-		String resultat_ajout = this.addNewFact(new_fact);			//on effectue l'ajout du fait
-		if(resultat_ajout.equals("erreur"))							//selon le résultat de l'ajout
+		boolean resultat = this.addNewFact(new_fact.trim());			//on effectue l'ajout du fait
+		if(! resultat)							//selon le résultat de l'ajout
 			this.ui.panel_Display.addText_Panel("Une erreur s'est produite lors de l'ajout du nouveau fait.",PANEL.RESULT);
 		else
-			this.ui.panel_Display.addText_Panel(resultat_ajout,PANEL.FACT);
+			this.ui.panel_Display.addText_Panel(new_fact,PANEL.FACT);
 		
 		this.ui.panel_Display.setActivePanel(PANEL.FACT);
 	}
 	
+	
+	private void AddCategoryButtonPressed(){
+		String new_Category = this.ui.panel_Add_Category.getText();//on récupère le nom de ltexte depuis l'interface
+		if(new_Category==null || new_Category.trim().length()==0)
+			return;
+		boolean resultat = this.addNewCategory(new_Category.trim());
+		if(resultat==false)
+			this.ui.panel_Display.addText_Panel("Une erreur s'est produite lors de l'ajout d'une nouvelle catégorie.",PANEL.RESULT);
+		else
+			this.ui.panel_Display.addText_Panel(new_Category,PANEL.CATEGORY);
+		
+		this.ui.panel_Display.setActivePanel(PANEL.CATEGORY);
+	}
 	
 	/**
 	 * Gèrer l'ajout d'une nouvelle règle
 	 */
 	private void AddRuleButtonPressed(){
 		//les prémisses
-		String premisses = this.ui.panel_Add_Rule.getText_Premisse();
+		String premisses = this.ui.panel_Add_Rule.getPremisses();
 		//les conséquences
-		String consequences = this.ui.panel_Add_Rule.getText_Consequence();	
+		String consequences = this.ui.panel_Add_Rule.getConsequences();	
 		//verification des données.
 		if(premisses==null || premisses.length()==0 || consequences==null || consequences.length()==0)
 			return;
@@ -326,7 +346,7 @@ public class Controller implements ActionListener {
 	 * lancer le test pour les valeurs indiqué dna le champ input du module "panel_Input"
 	 */
 	private void TestButtonPressed(){
-		String str_goals = this.ui.panel_Input.getInputText();
+		String str_goals = this.ui.panel_Test.getInputText();
 		//VERIFICATIONS
 		if(str_goals == null || str_goals.trim().length()==0)
 			return;

@@ -8,19 +8,19 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-public class UI_NewFact extends JPanel {
+public class UI_NewCategory extends JPanel {
 	private static final long serialVersionUID = -3973295406702553069L;
 	
 	private JLabel jl_title;
 	
-	public JTextField jl_fact;
+	public JTextField jl_category;
 	public JScrollPane scroll;
 	public JButton jb_add;
 	
 	/**
 	 * Constructeur
 	 */
-	public UI_NewFact(){
+	public UI_NewCategory(){
 		super();
 		this.setUp_UI();
 	}
@@ -33,12 +33,12 @@ public class UI_NewFact extends JPanel {
 		this.setLayout(new BorderLayout());
 		
 		//LES ÉLÉMENTS
-		jl_title = new JLabel("<html><h3>Ajouter un fait :</h3></html>");//me titre
+		jl_title = new JLabel("<html><h3>Catégorie :</h3></html>");//le titre
 		jl_title.setHorizontalAlignment(JLabel.CENTER);
-		jl_fact = new JTextField();//le champ input
-			jl_fact.setEditable(true);
-			jl_fact.setHorizontalAlignment(JLabel.CENTER);
-		scroll = new JScrollPane(jl_fact);
+		jl_category = new JTextField();//le champ input
+		jl_category.setEditable(true);
+		jl_category.setHorizontalAlignment(JLabel.CENTER);
+		scroll = new JScrollPane(jl_category);
 		jb_add = new JButton("Ajouter");//le bouton ajouter
 		
 		//AJOUT DES ELEMENTS DANS LE PANEL
@@ -53,8 +53,8 @@ public class UI_NewFact extends JPanel {
 	 * @return String -> la chaîne du label
 	 */
 	public String getText(){
-		String val = this.jl_fact.getText();
-		this.jl_fact.setText("");
+		String val = this.jl_category.getText();
+		this.jl_category.setText("");
 		return val;
 	}
 	

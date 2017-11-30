@@ -38,9 +38,9 @@ public class Fait {
             boolean value = true;
             if ( negation.equals( "!" ) ) {
                 value = false;
-                return new Fait( label.substring( 1, label.length() ), value );
+                return new Fait( label.substring( 1, label.length() ).trim(), value );
             } else
-                return new Fait( label, value );
+                return new Fait( label.trim(), value );
         } catch ( Exception e ) {
             return null;
         }

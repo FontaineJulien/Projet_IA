@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <System><regles>
-<categorie value="SF">
+<categorie value="Aventure">
 <regle>
 <antecedents>
 <antecedent value="true">magie</antecedent>
@@ -49,4 +49,9 @@
 <fait value="true">film</fait>
 <fait value="true">vaisseau</fait>
 </faits>
+<categories>
+<categorie>SF</categorie>
+<categorie>Action</categorie>
+<categorie>Aventure</categorie>
+</categories>
 </System>

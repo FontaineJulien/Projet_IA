@@ -1,6 +1,8 @@
 package UI_package;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -8,6 +10,7 @@ import java.awt.event.ComponentListener;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -20,9 +23,10 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 	
 	//LES DIFFÉRENTS ÉLÉMENTS
 	public UI_Display panel_Display;		//AFFCIHAGE
-	public UI_Input panel_Input;			//TESTER MOT
+	public UI_Input panel_Test;			//TESTER MOT
 	public UI_NewRule panel_Add_Rule;		//AJOUT REGLE
 	public UI_NewFact panel_Add_Fact;		//AJOUT FAIT
+	public UI_NewCategory panel_Add_Category;		//AJOUT CATEGORY
 	public JSplitPane split_pane_Horiz_1;	//SEPARATEUR partie_gauche <-> partie_droite
 	public JSplitPane split_pane_Vert_1;	//SEPARATEUR affichage <-> tester_mot
 	public JSplitPane split_pane_Vert_2;	//SEPARATEUR ajout_regle <-> ajout_fait	
@@ -51,9 +55,10 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 			@Override
 			public void componentResized(ComponentEvent arg0) {
 				//GESTION DU REDIMENSIONNEMENT DE LA FENÊTRE.
-				split_pane_Horiz_1.setDividerLocation(/*this(UI_Expert_System).*/getWidth()-200);
-				split_pane_Vert_1.setDividerLocation(/*this(UI_Expert_System).*/getHeight()-100);
-				split_pane_Vert_2.setDividerLocation(/*this(UI_Expert_System).*/getHeight()-100);
+				split_pane_Horiz_1.setDividerLocation(getWidth()-200);
+				split_pane_Vert_1.setDividerLocation(getHeight()-100);
+				split_pane_Vert_2.setDividerLocation(getHeight()-200);
+				
 			}
 			@Override
 			public void componentMoved(ComponentEvent arg0) {}
@@ -70,7 +75,7 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 	    this.setLocationRelativeTo(null);					//position de départ de l'app
 	    this.setSize(800,600);								//taille par défaut
 	    this.setResizable(true);							//redimensionnement : true
-	    //this.setMinimumSize(new Dimension(800,600));		//taille minimale : 800x600
+	    this.setMinimumSize(new Dimension(800,450));		//taille minimale : 800x600
 	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//fermeture par la croix
 
 	    this.addMenu();				//on ajoute la barre de menu
@@ -94,13 +99,24 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 		//INITIALISATION DES ÉLÉMENTS
 			//Left Group
 			panel_Display = new UI_Display();
-			panel_Input= new UI_Input();
-			split_pane_Vert_1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,panel_Display,panel_Input);
+			panel_Test= new UI_Input();
+			split_pane_Vert_1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,panel_Display,panel_Test);
 			
-			//Right Group
-			panel_Add_Rule = new UI_NewRule(); 
+			//Right Group			
 			panel_Add_Fact = new UI_NewFact();
-			split_pane_Vert_2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,panel_Add_Rule,panel_Add_Fact);
+			panel_Add_Category = new UI_NewCategory();
+			JPanel panel_Fact_and_Category = new JPanel();
+				GridLayout gridLayout = new GridLayout();
+				gridLayout.setColumns(1);
+				gridLayout.setRows(2);
+				panel_Fact_and_Category.setLayout(gridLayout);
+				panel_Fact_and_Category.add(panel_Add_Fact);
+				panel_Fact_and_Category.add(panel_Add_Category);
+			
+			
+			panel_Add_Rule = new UI_NewRule();
+			
+			split_pane_Vert_2 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,panel_Add_Rule,panel_Fact_and_Category);
 			
 			//on sépare les deux groupes verticaux par un séparateur Horizontale
 			split_pane_Horiz_1 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,split_pane_Vert_1,split_pane_Vert_2);
@@ -114,7 +130,7 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 			split_pane_Horiz_1.setOneTouchExpandable(true);
 			split_pane_Vert_1.setDividerLocation(this.getHeight()-100);
 			split_pane_Vert_1.setOneTouchExpandable(true);
-			split_pane_Vert_2.setDividerLocation(this.getHeight()-100);
+			split_pane_Vert_2.setDividerLocation(this.getHeight()-200);
 			split_pane_Vert_2.setOneTouchExpandable(true);
 			
 	}//fin addPanels
@@ -125,9 +141,9 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 	 * remet à zéro toutes les modules de l'interface.
 	 */
 	public void clearUI(){
-		this.panel_Add_Fact.getText_NewFact();//a pour effet de vider la zone de texte
-		this.panel_Add_Rule.getText_Consequence();//idem
-		this.panel_Add_Rule.getText_Premisse();//idem
+		this.panel_Add_Fact.getText();//a pour effet de vider la zone de texte
+		this.panel_Add_Rule.getConsequences();//idem
+		this.panel_Add_Rule.getPremisses();//idem
 		this.panel_Display.clearPanels();
 	}
 	
@@ -242,7 +258,7 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 	 * @return String -> la chaine correspondant au "FAIT" à ajouter.
 	 */
 	public String getText_NewFact(){
-		return this.panel_Add_Fact.getText_NewFact();
+		return this.panel_Add_Fact.getText();
 	}
 	
 	

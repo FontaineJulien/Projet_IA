@@ -23,6 +23,7 @@ public class Moteur {
 
     private BaseDeRegles BR;
     private BaseDeFaits  BF;
+    private BaseDeCategory BC;
     private Demandables  demandables;
     private History      history;
     private File         SystemFile;
@@ -33,6 +34,7 @@ public class Moteur {
     public Moteur() {
         this.BF = new BaseDeFaits();
         this.BR = new BaseDeRegles();
+        this.BC = new BaseDeCategory();
         this.demandables = new Demandables();
         this.history = new History();
     }
@@ -46,6 +48,8 @@ public class Moteur {
     public Moteur( String rules_file, Fait... knowledge ) {
         this.BF = new BaseDeFaits( knowledge );
         this.BR = new BaseDeRegles();
+        this.BC = new BaseDeCategory();
+        BC.read(rules_file);
         this.demandables = BR.read( rules_file );
         this.history = new History();
     }
@@ -431,16 +435,32 @@ public class Moteur {
             boolean value = true;
             if ( negation.equals( "!" ) ) {
                 value = false;
-                this.BF.add( new Fait( fait.substring( 1, fait.length() ), value ) );
+                return this.BF.add( new Fait( fait.substring( 1, fait.length() ), value ) );
             } else
-                this.BF.add( new Fait( fait, value ) );
-            return true;
+                return this.BF.add( new Fait( fait, value ) );
         } catch ( StringIndexOutOfBoundsException e ) {
             return false;
         } catch ( Exception e ) {
             return false;
         }
     }
+    
+    /**
+     * Ajouter un catégorie dans la base de catégorie.
+     * @param category -> la catégorie à ajouter
+     * @return boolean -> true si l'ajout est un succès
+     */
+    public boolean AddCategory( String category ) {
+        try {
+        	return this.BC.add(category);
+        } catch ( StringIndexOutOfBoundsException e ) {
+            return false;
+        } catch ( Exception e ) {
+            return false;
+        }
+    }
+    
+    
 
     /**
      * Ajouter une nouvelle Règle dans la base de Règles.
@@ -460,9 +480,9 @@ public class Moteur {
             // ArrayList<Fait> liste_cat = new ArrayList<Fait>();
 
             for ( int i = 0; i < antecedents.length; i++ )
-                liste_ant.add( Fait.String_toFact( antecedents[i] ) );
+                liste_ant.add( Fait.String_toFact( antecedents[i].trim() ) );
             for ( int i = 0; i < consequences.length; i++ )
-                liste_cons.add( Fait.String_toFact( consequences[i] ) );
+                liste_cons.add( Fait.String_toFact( consequences[i].trim() ) );
             /*
              * for(int i=0;i<Categories.length;i++)
              * liste_ant.add(Fait.String_toFact(Categories[i]));
@@ -498,7 +518,7 @@ public class Moteur {
      * @return
      */
     public ArrayList<String> getAllRules_StringFormat() {
-        return this.BR.getRegles_ToListString();
+        return this.BR.toListString();
     }
 
     /**
@@ -508,9 +528,18 @@ public class Moteur {
      * @return
      */
     public List<String> getAllFacts_StringFormat() {
-        return this.BF.getFaits_ToListString();
+        return this.BF.toListString();
     }
 
+    /**
+     * Renvoyer la liste des actégories de la base de catgories sous forme d'une liste de
+     * string
+     * 
+     * @return
+     */
+    public List<String> getAllCategories_StringFormat(){
+    	return this.BC.toListString();
+    }
     /**
      * renvoyer l'historique sous forme d'une liste de String
      * 
@@ -533,10 +562,13 @@ public class Moteur {
             this.BR = new BaseDeRegles();
         if ( this.BF == null )
             this.BF = new BaseDeFaits();
+        if ( this.BC == null )
+        	this.BC = new BaseDeCategory();
         try {
             this.demandables = this.BR.read( SystemFile.getCanonicalPath() );
             List<Fait> tmp = this.BF.read( SystemFile.getCanonicalPath() );
             this.demandables.addAll( tmp );
+            this.BC.read(SystemFile.getCanonicalPath());
             return true;
         } catch ( Exception e ) {
             return false;
@@ -550,8 +582,9 @@ public class Moteur {
      */
     public List<String> getAllInfo() {
         List<String> completeDisplay = this.demandables.getDemandables_ToListString();
-        completeDisplay.addAll( this.BF.getFaits_ToListString() );
-        completeDisplay.addAll( this.BR.getRegles_ToListString() );
+        completeDisplay.addAll( this.BF.toListString() );
+        completeDisplay.addAll( this.BR.toListString() );
+        completeDisplay.addAll( this.BC.toListString() );
         completeDisplay.addAll( this.history.toStringList() );
 
         return completeDisplay;
@@ -572,7 +605,7 @@ public class Moteur {
      * @return
      */
     public List<String> getFacts_ToListString() {
-        return this.BF.getFaits_ToListString();
+        return this.BF.toListString();
     }
 
     /**
@@ -581,7 +614,16 @@ public class Moteur {
      * @return
      */
     public List<String> getRules_ToListString() {
-        return this.BR.getRegles_ToListString();
+        return this.BR.toListString();
+    }
+    
+    /**
+     * Renvoyer les catégories sous forme d'une liste de String.
+     * 
+     * @return
+     */
+    public List<String> getCategorie_ToListString() {
+        return this.BC.toListString();
     }
 
     /**
@@ -679,6 +721,13 @@ public class Moteur {
                         + fact_list.get( i ).getLabel() + "</fait>\n" );
             }
             dos.writeBytes( "</faits>\n" );
+            
+            dos.writeBytes( "<categories>\n" ); // LES Catégories
+            List<String> cat_list = this.BC.toListString();
+            for ( String cat : cat_list ) {
+                dos.writeBytes( "<categorie>"+cat+"</categorie>\n" );
+            }
+            dos.writeBytes( "</categories>\n" );
 
             dos.writeBytes( "</System>" );
 
@@ -718,6 +767,12 @@ public class Moteur {
         BR.display();
         System.out.println();
     }
+    
+    public void displayBaseDeCategories() {
+        System.out.println( "Base de catégories : " );
+        BC.display();
+        System.out.println();
+    }
 
     public void displayDemandables() {
         System.out.println( "Demandables : " );
@@ -733,7 +788,8 @@ public class Moteur {
 
     public void displayAll() {
         displayDemandables();
-        displayBaseDeFaits();
+        displayBaseDeCategories();
+        displayBaseDeFaits();       
         displayBaseDeRegles();
         displayHistory();
     }

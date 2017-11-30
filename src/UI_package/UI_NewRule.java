@@ -64,11 +64,11 @@ public class UI_NewRule extends JPanel {
 			//tableau prémisse
 			jta_consequence.setBackground(Color.white);
 			jta_consequence.setColumns(1);
-			jta_consequence.setRows(10);
+			jta_consequence.setRows(2);
 			//tableau conséquence
 			jta_premisse.setBackground(Color.white);
 			jta_premisse.setColumns(1);
-			jta_premisse.setRows(10);
+			jta_premisse.setRows(2);
 			//bordure des tableaux
 			Border border = BorderFactory.createLineBorder(Color.BLACK);
 			jta_consequence.setBorder(BorderFactory.createCompoundBorder(border,BorderFactory.createEmptyBorder(10, 10, 10, 10)));
@@ -156,7 +156,7 @@ public class UI_NewRule extends JPanel {
 	 * et efface son contenu après
 	 * @return
 	 */
-	public String getText_Premisse(){
+	public String getPremisses(){
 		String premisses = this.jta_premisse.getText();
 		this.jta_premisse.setText("");//efface le contenu du textarea
 		return premisses;
@@ -166,7 +166,7 @@ public class UI_NewRule extends JPanel {
 	 * et efface son contenu après
 	 * @return
 	 */
-	public String getText_Consequence(){
+	public String getConsequences(){
 		String consequences = this.jta_consequence.getText();
 		this.jta_consequence.setText("");//efface le contenu du textarea
 		return consequences;

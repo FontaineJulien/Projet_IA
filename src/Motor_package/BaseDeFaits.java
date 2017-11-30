@@ -169,7 +169,7 @@ public class BaseDeFaits extends HashSet<Fait> {
      * 
      * @return
      */
-    public List<String> getFaits_ToListString() {
+    public List<String> toListString() {
         List<String> liste = new ArrayList<String>();
         Iterator<Fait> it = this.iterator();
         while ( it.hasNext() ) {
