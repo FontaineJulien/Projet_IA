@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+
+import Motor_package.Categorie;
 import Motor_package.Fait;
 import Motor_package.Moteur;
 
@@ -19,9 +22,16 @@ public class Main {
         // new Controller();
 
         /**/
-        Moteur m = new Moteur( "regles.esf", new Fait( "Magie", true ), new Fait( "Bataille", true ),
-                new Fait( "Chevalier", true ), new Fait( "Vaisseau", true ), new Fait( "Film", true ) );
-        System.out.println( m.deepForward( "TEST", new Fait( "Magie", true ) ) );
+        Moteur m = new Moteur( "regles.esf", new Fait( "Magie", true ));
+        
+        ArrayList<Fait> goals = new ArrayList<Fait>();
+        ArrayList<Categorie> categories = new ArrayList<Categorie>();
+        
+        goals.add(new Fait( "Force", true ));
+        
+        categories.add(new Categorie("Aventure"));
+        
+        System.out.println( m.deepForward( categories, goals ) );
         m.displayAll();
 
         /*

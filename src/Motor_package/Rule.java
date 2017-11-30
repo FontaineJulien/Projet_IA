@@ -11,21 +11,21 @@ public class Rule {
 
     private List<Fait> antecedents;
     private List<Fait> consequences;
-    private String     categorie;
+    private Categorie categorie;
 
     public Rule( List<Fait> antecedents, List<Fait> consequences, String categorie ) {
 
         this.antecedents = antecedents;
         this.consequences = consequences;
-        this.categorie = categorie.toLowerCase();
+        this.categorie = new Categorie(categorie);
     }
 
-    public String getCategorie() {
+    public Categorie getCategorie() {
         return categorie;
     }
 
     /**
-     * Renoyer une Regle sous forme d'une chaine.
+     * Renvoyer une Regle sous forme d'une chaine.
      */
     public String toString() {
         String s = "";

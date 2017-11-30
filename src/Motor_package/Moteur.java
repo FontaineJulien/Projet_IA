@@ -53,13 +53,7 @@ public class Moteur {
     /*
      * Chainage avant profondeur
      */
-    public boolean deepForward( String categ, Fait... goals ) {
-        history.clear();
-        List<Fait> goals_list = Arrays.asList( goals );
-        return deepForward( categ, goals_list );
-    }
-
-    public boolean deepForward( String categ, List<Fait> goals ) {
+    public boolean deepForward( List<Categorie> categories, List<Fait> goals ) {
         ArrayList<Boolean> activable = initActivable(); // Permet de savoir si
                                                         // la regle i a deja été
                                                         // activée => Une règle
@@ -83,10 +77,15 @@ public class Moteur {
 
         Iterator<Fait> it_goals = goals.iterator();
         Fait goal;
+        
+        Iterator<Categorie> it_categories;
+        Categorie categ;
 
         if ( BF.containsAllFaits( goals ) ) {
-            return true;
+            return true; 
         }
+        
+        history.clear();
 
         while ( inf && !goal_reached ) { // Tant qu'on infère et que le but
                                          // donné n'est pas atteint
@@ -100,9 +99,18 @@ public class Moteur {
                 rule = it_rule.next();
                 // La règle a-t-elle deja été validée et fait elle partie de la
                 // bonne categorie
-                if ( activable.get( rule.getKey() ) && ( rule.getValue().getCategorie().equals( categ ) ) ) {
+                if ( activable.get( rule.getKey() ) ) {
                     dec = true;
                     it_antecedents = rule.getValue().iteratorAntecedents();
+                    
+                    it_categories = categories.iterator();
+                    while(it_categories.hasNext()){
+                    	dec = false;
+                    	categ = it_categories.next();
+                    	if( categ.getCategorie().equals(rule.getValue().getCategorie().getCategorie())){
+                    		dec = true;
+                    	}
+                    }
 
                     while ( it_antecedents.hasNext() && dec ) { // Vérification
                         // des
@@ -111,9 +119,7 @@ public class Moteur {
                         // dans la base
                         // de faits
                         antecedent = it_antecedents.next();
-                        if ( !BF.contains( antecedent ) ) // Si l'antécédent
-                                                          // n'appartient pas à
-                                                          // la base de faits
+                        if ( !BF.contains( antecedent ) ) // Si l'antécédent n'appartient pas à la base de faits
                             dec = false; // La règle n'est pas déclenchable
                     }
 
@@ -164,12 +170,8 @@ public class Moteur {
     /*
      * Chaînage avant largeur
      */
-    public boolean wideForward( String categ, Fait... goals ) {
-        List<Fait> goals_list = Arrays.asList( goals );
-        return wideForward( categ, goals_list );
-    }
 
-    public boolean wideForward( String categ, List<Fait> goals ) {
+    public boolean wideForward( List<Categorie> categories, List<Fait> goals ) {
         ArrayList<Boolean> activable = initActivable(); // Permet de savoir si
                                                         // la regle i a deja été
                                                         // activée => Une règle
@@ -193,6 +195,9 @@ public class Moteur {
 
         Iterator<Fait> it_goals;
         Fait goal;
+        
+        Iterator<Categorie> it_categories;
+        Categorie categ;
 
         if ( BF.containsAllFaits( goals ) ) {
             return true;
@@ -212,9 +217,18 @@ public class Moteur {
 
                 // La règles a-t-elle dejà été validée ? Ou fait-elle partie de
                 // la bonne categorie ?
-                if ( activable.get( rule.getKey() ) && ( rule.getValue().getCategorie().equals( categ ) ) ) {
+                if ( activable.get( rule.getKey() ) ) {
                     dec = true;
                     it_antecedents = rule.getValue().iteratorAntecedents();
+                    
+                    it_categories = categories.iterator();
+                    while(it_categories.hasNext()){
+                    	dec = false;
+                    	categ = it_categories.next();
+                    	if( categ.getCategorie().equals(rule.getValue().getCategorie().getCategorie())){
+                    		dec = true;
+                    	}
+                    }
 
                     while ( it_antecedents.hasNext() && dec ) { // Vérification
                                                                 // des
