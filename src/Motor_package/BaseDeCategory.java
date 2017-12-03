@@ -17,10 +17,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class BaseDeCategory extends HashSet<String> {
+public class BaseDeCategory extends HashSet<Categorie> {
 	private static final long serialVersionUID = -6680859139142191003L;
-	
-    private static final String NODEATTRIBUTE_LES_CATEGORIES   = "categories";
+
+    private static final String NODENAME_RULES           		= "regles";
+    private static final String NODEATTRIBUTE_VALUE      		= "value";
 	
 	
 	/**
@@ -30,14 +31,14 @@ public class BaseDeCategory extends HashSet<String> {
 	public BaseDeCategory(String... categories){
 		for(String cat : categories)
 			if(cat.trim().length()!=0)
-				this.add(cat.trim());
+				this.add(new Categorie(cat.trim()));
 	}
 	
 	
 	
 	public boolean read(String file){
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-     // lecture du fichier
+        //lecture du fichier
         try {
 
             DocumentBuilder db = dbf.newDocumentBuilder(); // on créé un
@@ -46,16 +47,15 @@ public class BaseDeCategory extends HashSet<String> {
                                                               // fichier de
                                                               // sauvegarde
             
-
             Element root = document.getDocumentElement();
-            NodeList root_categories = root.getElementsByTagName( NODEATTRIBUTE_LES_CATEGORIES );
+            NodeList root_regles = root.getElementsByTagName( NODENAME_RULES );
             
-            NodeList categories = ( (Element) root_categories.item( 0 ) ).getChildNodes();
+            NodeList categories = ( (Element) root_regles.item( 0 ) ).getChildNodes();
             
             for ( int i = 0; i < categories.getLength(); i++ ) {
             	if ( categories.item( i ).getNodeType() == Node.ELEMENT_NODE ) {
-            		this.add( ( (Element) categories.item( i ) ).getTextContent().trim() );
-            		System.out.println(( (Element) categories.item( i ) ).getTextContent());
+            		Element categorie = (Element) categories.item(i);
+            		this.add(new Categorie( categorie.getAttribute( NODEATTRIBUTE_VALUE )));
             	}
             }
 
@@ -70,33 +70,86 @@ public class BaseDeCategory extends HashSet<String> {
 	}
 	
 	
-	public boolean add(String cat){
-		if(!this.contains(cat))
-			return super.add(cat);
-		else
-			{System.out.println("deja");return false;}
+	/**
+	 * Renvoyer les catégories sous forme d'une liste
+	 * @return
+	 */
+	protected List<Categorie> getAll(){
+		Iterator<Categorie> it = this.iterator();
+		List<Categorie> list_cat = new ArrayList<Categorie>();
+		while(it.hasNext()){
+			list_cat.add(it.next());
+		}
+		return list_cat;
 	}
 	
 	
+	/**
+	 * Ajoute une Categorie dans la base de Categorie.
+	 * @param cat -> la catégorie à ajouter.
+	 */
+	public boolean add(Categorie cat){
+		if(!this.contains(cat))
+			return super.add(cat);
+		else
+			return false;
+	}
 	
+	
+	public boolean contains( Categorie cat ) {
+        Iterator<Categorie> it = this.iterator();
+        Categorie curr_cat;
+
+        while ( it.hasNext() ) {
+            curr_cat = it.next();
+            if ( curr_cat.getCategorie().equals(cat.getCategorie()) )
+                return true;
+        }
+        return false;
+    }
+	/**
+	 * Affiche l'intégralité de la base de categorie dans la sortie Standard
+	 */
 	public void display(){
-		Iterator<String> it = this.iterator();
+		Iterator<Categorie> it = this.iterator();
 		if(it.hasNext()){
-			System.out.print(it.next().replace('_',' '));
+			System.out.print(it.next().getCategorie().replace('_',' '));
 		}
 		while(it.hasNext()){
-			System.out.print(","+it.next().replace('_',' '));
+			System.out.print(","+it.next().getCategorie().replace('_',' '));
 		}
 		System.out.println();
 	}
 	
+	
+	/**
+	 * renvoyer la liste des Categories de la Base de Categorie sous forme d'une List de Chaîne
+	 * @return
+	 */
 	public List<String> toListString(){
 		List<String> liste = new ArrayList<String>();
-		Iterator<String> it = this.iterator();
+		Iterator<Categorie> it = this.iterator();
 		while(it.hasNext()){
-			liste.add(it.next().replace('_', ' '));
+			liste.add(it.next().getCategorie().replace('_', ' '));
 		}
 		return liste;
+	}
+	
+	
+	/**
+	 * Renvoyer la Catégorie correspondant à la chaîne 'str_categorie' si elle appartiet à la Base de Catégorie.
+	 * Renvoyer null sinon.
+	 * @param str_categorie
+	 * @return
+	 */
+	protected Categorie getCategorie(String str_categorie){
+		Iterator<Categorie> it = this.iterator();
+		while(it.hasNext()){
+			Categorie elmt = it.next();
+			if(elmt.getCategorie().equals(str_categorie))
+				return elmt; 
+		}
+		return null;
 	}
 
 }

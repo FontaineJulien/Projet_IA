@@ -118,8 +118,13 @@ public class BaseDeFaits extends HashSet<Fait> {
         return true;
     }
 
+    
+    /**
+     * Ajouter un fait dans la base de Fait.
+     * Cohérence respectée. exemple : si 'fait' appartient à la base alors '!fait' n'appartient pas à la base
+     */
     public boolean add( Fait f ) {
-        if ( !this.contains( f ) )
+        if ( !this.contains_WithOpposite(f) )
             return super.add( f );
         else
             return false;
@@ -128,17 +133,31 @@ public class BaseDeFaits extends HashSet<Fait> {
     public boolean contains( Fait f ) {
         Iterator<Fait> it = this.iterator();
         Fait current_f;
-
         while ( it.hasNext() ) {
             current_f = it.next();
             if ( current_f.equals( f ) )
                 return true;
         }
-
         return false;
     }
 
-    /*
+    /**
+     * Tests si le fait ou son contraire appartiennent à la base.
+     * @param f
+     * @return
+     */
+    public boolean contains_WithOpposite(Fait f){
+        Iterator<Fait> it = this.iterator();
+        Fait current_f;
+        while ( it.hasNext() ) {
+            current_f = it.next();
+            if( current_f.getLabel().equals(f.getLabel()))
+                return true;
+        }
+        return false;
+    }
+    
+    /**
      * Affichage de la base de fait
      */
     public void display() {
@@ -191,5 +210,7 @@ public class BaseDeFaits extends HashSet<Fait> {
         }
         return liste;
     }
+    
+
 
 }

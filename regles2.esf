@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<System>
+	<regles>
+		<categorie value="bd">
+			<regle>
+			<antecedents>
+					<antecedent value="true">jolly_jumper</antecedent>
+					<antecedent value="true">far_west</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">lucky_luke</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">joe</antecedent>
+					<antecedent value="true">lucky_luke</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">joe</consequence>
+					<consequence value="true">prison</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">joe</antecedent>
+					<antecedent value="false">lucky_luke</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">joe</consequence>
+					<consequence value="true">libre</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">boule</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">bill</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">boule</antecedent>
+					<antecedent value="true">bill</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">caroline</consequence>
+				</consequences>
+			</regle>
+		</categorie>
+		<categorie value="comics">
+			<regle>
+			<antecedents>
+					<antecedent value="true">batman</antecedent>
+					<antecedent value="true">joker</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">gotham</consequence>
+				</consequences>
+			</regle>
+		</categorie>
+		<categorie value="magazine">
+		</categorie>
+		<categorie value="roman">
+		</categorie>
+	</regles>
+	<faits>
+		<fait value="true">bill</fait>
+		<fait value="true">lucky_luke</fait>
+		<fait value="true">wonderwoman</fait>
+		<fait value="true">far_west</fait>
+		<fait value="true">joker</fait>
+		<fait value="true">hulk</fait>
+		<fait value="true">batman</fait>
+		<fait value="true">superman</fait>
+		<fait value="true">boule</fait>
+		<fait value="true">jolly_jumper</fait>
+		<fait value="true">gotham</fait>
+		<fait value="true">caroline</fait>
+	</faits>
+</System>

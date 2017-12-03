@@ -1,28 +1,28 @@
-import java.util.ArrayList;
-
 import Controller_package.Controller;
-import Motor_package.Categorie;
-import Motor_package.Fait;
-import Motor_package.Moteur;
 
 public class Main {
 
     public static void main( String[] args ) {
 
         /**
-         * - Vérifier avant tout algorithme et pendant l'algo, que les goals que
-         * l'ont testent n'appartiennent pas déjà à la base de faits. ! Déjà le
-         * cas pour le chaînage arrière.
-         * 
-         * - Prendre en compte les catégories lors de l'ajout d'une nouvelle
-         * règle, dans le chargement d'un fichier de sauvegarde, dans la
-         * sauvegarde, ET SURTOUT dzns le moteur.
+         * -DOUBLONS
+     	 * 	Toutes les bases gèrent l'interdiction des doublons, y compris la base de règle
+     	 *
+     	 * -Cohérence des FAITS
+         * 		La base de Fait gère la cohérence. ( si FAIT1 appartient alors !FAIT1 ne peut pas appartenir à la base)
+     	 * 
+     	 * À AJOUTER:
+         * -Ajouter la cohérence des règles.
+     	 *		Actuellement on peut ajouter des règles contradictoires.
+     	 * 
          */
 
         //*
          new Controller();
 
-        /**/
+         
+         
+        /*/
         Moteur m = new Moteur( "regles.esf", new Fait( "Magie", true ));
         
         ArrayList<Fait> goals = new ArrayList<Fait>();

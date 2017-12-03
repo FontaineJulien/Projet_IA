@@ -13,16 +13,14 @@ public class Rule {
     private List<Fait> consequences;
     private Categorie categorie;
 
-    public Rule( List<Fait> antecedents, List<Fait> consequences, String categorie ) {
+    public Rule( List<Fait> antecedents, List<Fait> consequences, Categorie categorie ) {
 
         this.antecedents = antecedents;
         this.consequences = consequences;
-        this.categorie = new Categorie(categorie);
+        this.categorie = categorie;
     }
 
-    public Categorie getCategorie() {
-        return categorie;
-    }
+    
 
     /**
      * Renvoyer une Regle sous forme d'une chaine.
@@ -33,14 +31,14 @@ public class Rule {
         Iterator<Fait> it_consequences = consequences.iterator();
 
         if ( it_antecedents.hasNext() )
-            s += it_antecedents.next().getLabel();
+            s += it_antecedents.next().toString();
         while ( it_antecedents.hasNext() ) {
-            s += " & " + it_antecedents.next().getLabel();
+            s += " & " + it_antecedents.next().toString();
         }
         if ( it_consequences.hasNext() )
-            s += " => " + it_consequences.next().getLabel();
+            s += " => " + it_consequences.next().toString();
         while ( it_consequences.hasNext() ) {
-            s += " & " + it_consequences.next().getLabel();
+            s += " & " + it_consequences.next().toString();
         }
         return s;
     }
@@ -59,6 +57,10 @@ public class Rule {
 
     public List<Fait> getConsequences() {
         return consequences;
+    }
+    
+    public Categorie getCategorie() {
+        return categorie;
     }
 
 }

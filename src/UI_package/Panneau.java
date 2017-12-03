@@ -56,6 +56,7 @@ public class Panneau extends JTextArea{
 	  this.append(text);
   }
   
+  
   /**
    * Met à jour le text en cas de changement de PANSTYLE.
    */
@@ -92,17 +93,13 @@ public class Panneau extends JTextArea{
 	  if(pan_PANSTYLE==null)pan_PANSTYLE=Panneau.PANSTYLE.CLASSIC;
 		switch(pan_PANSTYLE){
 			case OBLIVION:
-				System.out.println("OBLIVION");
 				numstyle=0;break;
 			case CLASSIC:
-				System.out.println("CLASSIC");
 				numstyle=1;break;
 			case COBALT:
-				System.out.println("COBALT");
 				numstyle=2;
 				break;
 			default:
-				System.out.println("DEFAUT");
 				numstyle=1;
 				break;
 		}

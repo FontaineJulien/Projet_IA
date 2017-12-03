@@ -128,7 +128,7 @@ public class UI_Display extends JInternalFrame {
    * update le panel choisi avec le text fourni
    * @param panel
    */
-  public void updateText_Panel(PANEL panel,String txt){
+  public void updateText_Panel(String txt,PANEL panel){
 	  switch(panel){
 	  case RESULT:this.tPan[0].setText(txt);break;
 	  case RULE:this.tPan[1].setText(txt);break;
@@ -136,6 +136,25 @@ public class UI_Display extends JInternalFrame {
 	  case CATEGORY:this.tPan[3].setText(txt);break;
 	  default:break;
 	  }
+  }
+  
+  /**
+   * Update le 'panel' choisi avec la liste de String 'str_list'.
+   * @param str_list -> la liste de String
+   * @param panel -> le panel choisi
+   */
+  public void updateText_Panel(List<String> str_list, PANEL panel){
+	  int tPan_ind = 0;
+	  switch(panel){
+	  	case RESULT:tPan_ind=0;break;
+	  	case RULE:tPan_ind=1;break;
+	  	case FACT:tPan_ind=2;break;
+	  	case CATEGORY:tPan_ind=3;break;
+	  	default:break;
+	  }
+	  this.tPan[tPan_ind].setText("");
+	  for(String str : str_list)
+		  this.tPan[tPan_ind].addText(str);
   }
   /**
    * Choisir le panel à afficher. RESULT, RULE ou FACT.

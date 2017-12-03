@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -43,7 +44,7 @@ public class BaseDeRegles extends HashMap<Integer, Rule> {
 
         boolean current_valuation = false;
         int current_rule_number = 0;
-        String current_categorie;
+        
 
         Demandables demandables = new Demandables();
 
@@ -62,7 +63,7 @@ public class BaseDeRegles extends HashMap<Integer, Rule> {
             for ( int i = 0; i < nbCategories; i++ ) {
                 if ( categories.item( i ).getNodeType() == Node.ELEMENT_NODE ) {
                     Element categorie = (Element) categories.item( i );
-                    current_categorie = categorie.getAttribute( NODEATTRIBUTE_VALUE );
+                    Categorie current_Categorie = new Categorie(categorie.getAttribute( NODEATTRIBUTE_VALUE ));
 
                     NodeList reglesCategorie = categorie.getChildNodes();
                     int nbReglesCategorie = reglesCategorie.getLength();
@@ -114,7 +115,7 @@ public class BaseDeRegles extends HashMap<Integer, Rule> {
                             current_antecedents.trimToSize();
                             current_consequences.trimToSize();
                             this.put( current_rule_number,
-                                    new Rule( current_antecedents, current_consequences, current_categorie ) );
+                                    new Rule( current_antecedents, current_consequences, current_Categorie ) );
                             current_rule_number++;
                         }
                     }
@@ -142,18 +143,82 @@ public class BaseDeRegles extends HashMap<Integer, Rule> {
      *            -> Liste des Consequences
      * @warning PENSEZ à RAJOUTER les catégories
      */
-    public Rule AddRule( ArrayList<Fait> current_antecedents, ArrayList<Fait> current_consequences,
-            ArrayList<String> Categorie ) {
-        Rule rule = new Rule( current_antecedents, current_consequences, "" );
-        if(! this.containsValue(rule))
-        	{this.put( this.size(), rule );
+    public Rule AddRule( ArrayList<Fait> current_antecedents, ArrayList<Fait> current_consequences, Categorie categorie) {
+        Rule rule = new Rule( current_antecedents, current_consequences, categorie );
+        if(! this.contains(rule))
+        	{
+        	this.put( this.size(), rule );
         	return rule;
         	}
-        else 
+        else{
         	return null;
+        	}
+    }
+    
+    /**
+     * Test si la regle 'rule' appartient déjà à la base de règle.
+     * Une regle appartient à la base si pour une regle de la base :
+     * 	-elle a le même nombre d'antécédents et de conséquence	ET
+     *  -elle a les même antécédents peut importe l'ordre		ET
+     *  -elle a les mêmes conséquences peut importe l'ordre		ET
+     *  -elle a la même catégorie.
+     *  
+     *  Dans tous les autres cas, la règle n'appartient pas à la base.
+     * 	
+     * @param rule
+     * @return TRUE si la règle apparient à la base
+     */
+    public boolean contains(Rule rule){
+        Iterator<Entry<Integer, Rule>> it = this.iterator();		//l'iterator su la base
+        List<Fait> antes = rule.getAntecedents();					//les antecedents de la regle à tester
+        List<Fait> cons = rule.getConsequences();					//les consequences de la règle à tester
+        Categorie cat = rule.getCategorie();						//la catégorie de la règle à tester
+        
+        List<Fait> curr_antes = null;								//les antecedents de la regle courante
+        List<Fait> curr_cons = null;								//les consequence de la regle courante
+        Categorie curr_cat =null; 									//la catégorie de la règle courante
+                
+        Entry<Integer, Rule> rule_curr;								//la règle courante dans la base
+        
+        while ( it.hasNext() ) {									//POUR chaque REGLE
+        	rule_curr = it.next();
+            curr_antes = rule_curr.getValue().getAntecedents();
+            curr_cons = rule_curr.getValue().getConsequences();
+            curr_cat = rule_curr.getValue().getCategorie();
+            
+            if((curr_antes.size()==antes.size()) && (curr_cons.size()==cons.size()))	//si il y a pas autant d'antécédants et/ou de conséquences
+            {																			//alors on teste l'égalité des règles
+            	boolean antes_egaux = true;
+            	for(int i=0;i<antes.size();i++){										//pour chaque antecedents de la règle à tester.
+            		boolean ante_present = false;
+            		for(int j=0; j<curr_antes.size();j++)								//On vérifie qu'il appartient à la liste des antécdents 
+            			if(curr_antes.get(i).equalsToFact(antes.get(i)))//de la règle courante de la base
+            				ante_present=true;
+            		if(!ante_present)													//si l'antécédents de la règle à tester n'appartient pas
+            			antes_egaux=false;												//à la liste des antécédents de la règles courante de la base.
+            																			//alors les antécédents des deux règles ne sont pas les mêmes.
+            	}//fin test sur antécédents
+            	
+            	boolean cons_egales=true;
+            	for(int i=0;i<cons.size();i++){											//pour chaque conséquence de la règle à tester.
+            		boolean cons_present = false;
+            		for(int j=0; j<curr_cons.size();j++)								//On vérifie qu'il appartient à la liste des conséquences 
+            			if(curr_cons.get(i).equalsToFact(cons.get(i)))//de la règle courante de la base
+            				cons_present=true;
+            		if(!cons_present)													//si conséquence de la règle à tester n'appartient pas
+            			cons_egales= false;												//à la liste des conséquence de la règles courante de la base.
+            																			//alors les consequences des deux règles ne sont pas les mêmes.
+            	}//fin test sur conséquences
+            	
+            	if(cons_egales&&antes_egaux)											//si les listes des antecedents et des consequences sont égales
+            		if(curr_cat.getCategorie().equals(cat.getCategorie()))				//et que les catégories sont les mêmes
+            			return true;													//alors il s'agit de la même règle
+            }
+        }
+        return false;																	//si on arrive là, c'est que la règle à tester n'appartient pas à la base de règles.
     }
 
-    /*
+    /**
      * Affiche les règles
      */
     public void display() {

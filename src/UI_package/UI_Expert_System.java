@@ -23,7 +23,7 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 	
 	//LES DIFFÉRENTS ÉLÉMENTS
 	public UI_Display panel_Display;		//AFFCIHAGE
-	public UI_Input panel_Test;			//TESTER MOT
+	public UI_Test panel_Test;			//TESTER MOT
 	public UI_NewRule panel_Add_Rule;		//AJOUT REGLE
 	public UI_NewFact panel_Add_Fact;		//AJOUT FAIT
 	public UI_NewCategory panel_Add_Category;		//AJOUT CATEGORY
@@ -76,8 +76,7 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 	    this.setSize(800,600);								//taille par défaut
 	    this.setResizable(true);							//redimensionnement : true
 	    this.setMinimumSize(new Dimension(800,450));		//taille minimale : 800x600
-	    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//fermeture par la croix
-
+	    this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);//action du bouton fermer(croix) de la fenêtre
 	    this.addMenu();				//on ajoute la barre de menu
 	    this.addPanels();			//on ajoute les panneaux
 	    this.addResizeSettings();	//on ajoute la gestion du redimensionnement
@@ -99,7 +98,7 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 		//INITIALISATION DES ÉLÉMENTS
 			//Left Group
 			panel_Display = new UI_Display();
-			panel_Test= new UI_Input();
+			panel_Test= new UI_Test();
 			split_pane_Vert_1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,panel_Display,panel_Test);
 			
 			//Right Group			
@@ -125,6 +124,10 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 			this.getContentPane().add(split_pane_Horiz_1,BorderLayout.CENTER);
 
 		//REGLAGES DES ELEMENTS
+			//épaissseur des dividers
+			split_pane_Horiz_1.setDividerSize(20);
+			split_pane_Vert_1.setDividerSize(20);
+			split_pane_Vert_2.setDividerSize(20);
 			//position par défaut des séparateurs.
 			split_pane_Horiz_1.setDividerLocation(this.getWidth()-200);
 			split_pane_Horiz_1.setOneTouchExpandable(true);
@@ -141,10 +144,10 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 	 * remet à zéro toutes les modules de l'interface.
 	 */
 	public void clearUI(){
-		this.panel_Add_Fact.getText();//a pour effet de vider la zone de texte
-		this.panel_Add_Rule.getConsequences();//idem
-		this.panel_Add_Rule.getPremisses();//idem
-		this.panel_Display.clearPanels();
+		this.panel_Add_Fact.getText();		//a pour effet de vider la zone de texte
+		this.panel_Add_Rule.clearAll();		//efface les zones de texte et la liste de catégories
+		this.panel_Display.clearPanels();	//efface le contenu des panels
+		this.panel_Test.clearAll();			//on efface la liste des catégoris du panel TEST
 	}
 	
 	
@@ -158,25 +161,27 @@ public class UI_Expert_System extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent arg0) {			
 		//ITEMS MENU
-			if(arg0.getSource()==this.menuBar.jrmi_AppTheme_Metal)//theme Metal 
+			if(arg0.getSource()==this.menuBar.jrmi_AppTheme_Metal)		//theme Metal 
 				this.setAppTheme("METAL");
-			if(arg0.getSource()==this.menuBar.jrmi_AppTheme_Nimbus)//theme Nimbus
+			if(arg0.getSource()==this.menuBar.jrmi_AppTheme_Nimbus)		//theme Nimbus
 				this.setAppTheme("NIMBUS");
-			if(arg0.getSource()==this.menuBar.jrmi_AppTheme_GTK_Plus)//theme GTK+
+			if(arg0.getSource()==this.menuBar.jrmi_AppTheme_GTK_Plus)	//theme GTK+
 				this.setAppTheme("GTK_PLUS");
-			if(arg0.getSource()==this.menuBar.jrmi_AppTheme_CDE_Motif)//theme CDE/Motif
+			if(arg0.getSource()==this.menuBar.jrmi_AppTheme_CDE_Motif)	//theme CDE/Motif
 				this.setAppTheme("CDE/MOTIF");
+			
 			if(arg0.getSource()==this.menuBar.jrmi_PannelStyle_Oblivion)//style Oblivion 
 				this.setPanelsStyle(Panneau.PANSTYLE.OBLIVION);
-			if(arg0.getSource()==this.menuBar.jrmi_PannelStyle_Classic)//style classique
+			if(arg0.getSource()==this.menuBar.jrmi_PannelStyle_Classic)	//style classique
 				this.setPanelsStyle(Panneau.PANSTYLE.CLASSIC);
-			if(arg0.getSource()==this.menuBar.jrmi_PannelStyle_Cobalt)//style cobalt
+			if(arg0.getSource()==this.menuBar.jrmi_PannelStyle_Cobalt)	//style cobalt
 				this.setPanelsStyle(Panneau.PANSTYLE.COBALT);
-			if(arg0.getSource()==this.menuBar.jrmi_PannelFont_Small)//police small
+			
+			if(arg0.getSource()==this.menuBar.jrmi_PannelFont_Small)	//police small
 				this.setPanelsFontSize(Panneau.FONTSIZE.SMALL);
-			if(arg0.getSource()==this.menuBar.jrmi_PannelFont_Medium)//police medium
+			if(arg0.getSource()==this.menuBar.jrmi_PannelFont_Medium)	//police medium
 				this.setPanelsFontSize(Panneau.FONTSIZE.MEDIUM);
-			if(arg0.getSource()==this.menuBar.jrmi_PannelFont_Large)//police Large
+			if(arg0.getSource()==this.menuBar.jrmi_PannelFont_Large)	//police Large
 				this.setPanelsFontSize(Panneau.FONTSIZE.LARGE);
 	}
 	

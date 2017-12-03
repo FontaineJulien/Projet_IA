@@ -107,13 +107,16 @@ public class Moteur {
                     dec = true;
                     it_antecedents = rule.getValue().iteratorAntecedents();
                     
-                    it_categories = categories.iterator();
-                    while(it_categories.hasNext()){
-                    	dec = false;
-                    	categ = it_categories.next();
-                    	if( categ.getCategorie().equals(rule.getValue().getCategorie().getCategorie())){
-                    		dec = true;
-                    	}
+
+                    if(categories!= null){						//Y a t-il des catégories à respecter ?
+	                    it_categories = categories.iterator();
+	                    while(it_categories.hasNext()){
+	                    	dec = false;
+	                    	categ = it_categories.next();
+	                    	if( categ.getCategorie().equals(rule.getValue().getCategorie().getCategorie())){
+	                    		dec = true;
+	                    	}
+	                    }
                     }
 
                     while ( it_antecedents.hasNext() && dec ) { // Vérification
@@ -225,13 +228,15 @@ public class Moteur {
                     dec = true;
                     it_antecedents = rule.getValue().iteratorAntecedents();
                     
-                    it_categories = categories.iterator();
-                    while(it_categories.hasNext()){
-                    	dec = false;
-                    	categ = it_categories.next();
-                    	if( categ.getCategorie().equals(rule.getValue().getCategorie().getCategorie())){
-                    		dec = true;
-                    	}
+                    if(categories!= null){						//Y a t-il des catégories à respecter ?
+	                    it_categories = categories.iterator();
+	                    while(it_categories.hasNext()){
+	                    	dec = false;
+	                    	categ = it_categories.next();
+	                    	if( categ.getCategorie().equals(rule.getValue().getCategorie().getCategorie())){
+	                    		dec = true;
+	                    	}
+	                    }
                     }
 
                     while ( it_antecedents.hasNext() && dec ) { // Vérification
@@ -447,12 +452,12 @@ public class Moteur {
     
     /**
      * Ajouter un catégorie dans la base de catégorie.
-     * @param category -> la catégorie à ajouter
+     * @param category -> la chaine de la catégorie à ajouter
      * @return boolean -> true si l'ajout est un succès
      */
     public boolean AddCategory( String category ) {
         try {
-        	return this.BC.add(category);
+        	return this.BC.add(new Categorie(category));
         } catch ( StringIndexOutOfBoundsException e ) {
             return false;
         } catch ( Exception e ) {
@@ -473,30 +478,22 @@ public class Moteur {
      *            -> liste de String des catégories.
      * @return boolean -> true si succès.
      */
-    public Rule AddRule( String[] antecedents, String[] consequences, String[] Categories ) {
+    public Rule AddRule( String[] antecedents, String[] consequences, Categorie categorie ) {
         try {
             ArrayList<Fait> liste_ant = new ArrayList<Fait>();
             ArrayList<Fait> liste_cons = new ArrayList<Fait>();
-            // ArrayList<Fait> liste_cat = new ArrayList<Fait>();
 
             for ( int i = 0; i < antecedents.length; i++ )
                 liste_ant.add( Fait.String_toFact( antecedents[i].trim() ) );
             for ( int i = 0; i < consequences.length; i++ )
                 liste_cons.add( Fait.String_toFact( consequences[i].trim() ) );
-            /*
-             * for(int i=0;i<Categories.length;i++)
-             * liste_ant.add(Fait.String_toFact(Categories[i]));
-             */
-            Rule added_rule = this.BR.AddRule( liste_ant, liste_cons, null );
+            Rule added_rule = this.BR.AddRule( liste_ant, liste_cons, categorie );
             if ( added_rule != null ) {
                 for ( int i = 0; i < liste_ant.size(); i++ )
                     this.demandables.add( liste_ant.get( i ) );
                 for ( int i = 0; i < liste_cons.size(); i++ )
                     this.demandables.add( liste_cons.get( i ) );
-                /*
-                 * for(int i=0;i<liste_cat.size();i++)
-                 * this.demandables.add(liste_cat.get(i));
-                 */
+                
                 return added_rule;
             } else
                 return null;
@@ -539,6 +536,15 @@ public class Moteur {
      */
     public List<String> getAllCategories_StringFormat(){
     	return this.BC.toListString();
+    }
+    
+    /**
+     * Renvoyer la Categorie de la base de Categorie, correspondant à la chaîne str_categorie.
+     * @param str_categorie
+     * @return
+     */
+    public Categorie getCategorie(String str_categorie){
+    	return this.BC.getCategorie(str_categorie);
     }
     /**
      * renvoyer l'historique sous forme d'une liste de String
@@ -607,6 +613,7 @@ public class Moteur {
     public List<String> getFacts_ToListString() {
         return this.BF.toListString();
     }
+    
 
     /**
      * Renvoyer les règles sou forme d'une liste de String.
@@ -618,6 +625,23 @@ public class Moteur {
     }
     
     /**
+     * Renvoyer les règles sous forme d'une liste de String et triées par catégories.
+     * Exemple : 'catégorie1 : SF; rule1; rule2; Rule3 ...'
+     * @return
+     */
+    public List<String> getRules_ToListString_WithCategories(){
+    	List<String> list_rule = new ArrayList<String>();
+    	for(Categorie cat : this.BC.getAll()){
+    		list_rule.add("Catégorie : "+cat.getCategorie());
+    		for(Rule rule : this.BR.getAll()){
+    			if(rule.getCategorie().getCategorie().equals(cat.getCategorie()))
+    				list_rule.add("	"+rule.toString());
+    			}
+    	}
+    	return list_rule;
+    }
+    
+    /**
      * Renvoyer les catégories sous forme d'une liste de String.
      * 
      * @return
@@ -625,6 +649,7 @@ public class Moteur {
     public List<String> getCategorie_ToListString() {
         return this.BC.toListString();
     }
+    
 
     /**
      * Renvoyer les history sou forme d'une liste de String.
@@ -680,57 +705,52 @@ public class Moteur {
                     new BufferedOutputStream(
                             new FileOutputStream( this.SystemFile ) ) );
 
-            // ECRITURE DU FICHIER
-            dos.writeBytes( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>" ); // L'ENTETE
-                                                                                                // DU
-                                                                                                // FICHIER
-            dos.writeBytes( "\n<System>" );
-
-            dos.writeBytes( "<regles>\n" ); // LES RÈGLES
-            // pour chaque catégorie
-            // mais là il n'y en a qu'une c'est SF
-            dos.writeBytes( "<categorie value=\"SF\">\n" );
-            List<Rule> rule_list = this.BR.getAll();
-            for ( int i = 0; i < rule_list.size(); i++ ) { // POUR CHAQUE REGLE
-                dos.writeBytes( "<regle>\n" );
-                List<Fait> ante = rule_list.get( i ).getAntecedents();
-                dos.writeBytes( "<antecedents>\n" );
-                for ( int j = 0; j < ante.size(); j++ ) { // POUR CHAQUE
-                                                          // ANTECEDENT
-                    dos.writeBytes( "<antecedent value=\"" + ante.get( j ).getValuation() + "\">"
-                            + ante.get( j ).getLabel() + "</antecedent>\n" );
-                }
-                dos.writeBytes( "</antecedents>\n" );
-                List<Fait> cons = rule_list.get( i ).getConsequences();
-                dos.writeBytes( "<consequences>\n" );
-                for ( int j = 0; j < cons.size(); j++ ) { // POUR CHAQUE
-                                                          // Consequence
-                    dos.writeBytes( "<consequence value=\"" + cons.get( j ).getValuation() + "\">"
-                            + cons.get( j ).getLabel() + "</consequence>\n" );
-                }
-                dos.writeBytes( "</consequences>\n" );
-                dos.writeBytes( "</regle>\n" );
-            }
-            dos.writeBytes( "</categorie>\n" );
-            dos.writeBytes( "</regles>\n" );
-
-            dos.writeBytes( "<faits>\n" ); // LES FAITS
-            List<Fait> fact_list = this.BF.getAll();
-            for ( int i = 0; i < fact_list.size(); i++ ) {
-                dos.writeBytes( "<fait value=\"" + fact_list.get( i ).getValuation() + "\">"
-                        + fact_list.get( i ).getLabel() + "</fait>\n" );
-            }
-            dos.writeBytes( "</faits>\n" );
             
-            dos.writeBytes( "<categories>\n" ); // LES Catégories
-            List<String> cat_list = this.BC.toListString();
-            for ( String cat : cat_list ) {
-                dos.writeBytes( "<categorie>"+cat+"</categorie>\n" );
-            }
-            dos.writeBytes( "</categories>\n" );
-
+            List<Categorie> category_list = this.BC.getAll();									//les catégories
+            List<Rule> rule_list = this.BR.getAll();											//les règles
+            List<Fait> fact_list = this.BF.getAll();											//les faits
+            
+            
+            // ECRITURE DU FICHIER
+            dos.writeBytes( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n" );	// l'entête du fichier
+            
+            dos.writeBytes( "<System>\n" );															//ELEMENT ROOT
+            dos.writeBytes( "	<regles>\n" ); 														//	RÈGLES
+	            for(Categorie cat : category_list){													//		CATEGORIE
+		            dos.writeBytes( "		<categorie value=\""+cat.getCategorie()+"\">\n" );
+		            for ( Rule rule : rule_list) { 													//pour chaque règle
+		            	if(rule.getCategorie().getCategorie().equals(cat.getCategorie())){			//si elle appartient à la catégorie			
+		                dos.writeBytes( "			<regle>\n" );									//			REGLE
+		                
+		                	List<Fait> antecedents = rule.getAntecedents();
+			                dos.writeBytes( "			<antecedents>\n" );							//				ANTECEDENTS
+			                for ( Fait fait : antecedents ) 
+			                    dos.writeBytes														//					ANTECEDENT
+			                    ("					<antecedent value=\""+fait.getValuation()+"\">" 	
+			                    +fait.getLabel()+"</antecedent>\n");
+			                dos.writeBytes("				</antecedents>\n");
+		                
+			                List<Fait> consequences = rule.getConsequences();
+			                dos.writeBytes( "				<consequences>\n" );					//				CONSEQUENCES
+			                for ( Fait fait : consequences )
+			                    dos.writeBytes
+			                    ("					<consequence value=\""+fait.getValuation()+"\">"//					CONSEQUENCE
+			                    +fait.getLabel()+"</consequence>\n");
+			                dos.writeBytes( "				</consequences>\n" );
+		                dos.writeBytes( "			</regle>\n" );
+		            	}//end if RULE in CATEGORIE
+		            }//end for RULES
+		            dos.writeBytes( "		</categorie>\n" );
+	            }//end for CATEGORIES
+	            dos.writeBytes( "	</regles>\n" );
+	
+	            dos.writeBytes( "	<faits>\n" ); 													//	FAITS
+	            for ( Fait fait : fact_list )
+	                dos.writeBytes( "		<fait value=\"" + fait.getValuation() + "\">"			//		FAIT
+	                        + fait.getLabel()+"</fait>\n" );
+	            dos.writeBytes( "	</faits>\n" );
+            
             dos.writeBytes( "</System>" );
-
             dos.close(); // FERMETURE DU FICHIER
         } catch ( FileNotFoundException e ) {
             e.printStackTrace();

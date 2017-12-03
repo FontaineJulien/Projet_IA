@@ -3,20 +3,28 @@ package UI_package;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 
-public class UI_NewRule extends JPanel {
+public class UI_NewRule extends JPanel{
 	private static final long serialVersionUID = 6387578816629545185L;
 	
+	//Layout principal
+	private GridLayout grid_Layout;
 	//le titre
 	public JLabel jl_title;
+	//la catégorie
+	private JLabel jl_category; 
+	private UI_List list_category;
 	//les boutons
 	public JButton jb_add;
 	public JButton jb_del; //pour supprimer un règle chargée dans le panneau
@@ -49,6 +57,9 @@ public class UI_NewRule extends JPanel {
 		//INTIALISATION DES OBJETS
 		jl_title = new JLabel();
 		
+		list_category = new UI_List("Aucune",ListSelectionModel.SINGLE_SELECTION);
+		jl_category = new JLabel("Catégorie");
+		
 		jb_add = new JButton();
 		jb_del = new JButton();
 		
@@ -75,10 +86,14 @@ public class UI_NewRule extends JPanel {
 			jta_premisse.setBorder(BorderFactory.createCompoundBorder(border,BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 				
 			//le titre
-			jl_title.setText(" la règle.");
-			//les bouttons
-			jb_add.setText("Ajouter");
-			jb_del.setText("Effacer");
+			jl_title.setText("<html><h3>Règle :</h3></html>");
+			jl_title.setHorizontalAlignment(JLabel.CENTER);
+			
+			//la catégorie
+			jl_category.setVerticalAlignment(JLabel.CENTER);
+			
+			
+			
 			//les titres des textarea
 			jl_premisse.setText("Prémisse(s) :");
 			jl_consequence.setText("Conséquence(s) :");
@@ -92,47 +107,58 @@ public class UI_NewRule extends JPanel {
 					"Star-wars<br/>" +
 					"Jedi</html>");
 		
+			//les bouttons
+			jb_add.setText("Ajouter");
+			jb_del.setText("Effacer");
 		
 		//DISPOSITION DES OBJETS
 		//lAYOUT PRINCIPAL
+		this.grid_Layout = new GridLayout();//le layout manager principal
+		this.grid_Layout.setColumns(1);		//1 colonne
+		this.grid_Layout.setRows(4);		//4 lignes
 		this.setLayout(new BorderLayout());
 		
-		//TITRE + BOUTONS
-		JPanel panel_top = new JPanel();
-		panel_top.setLayout(new BorderLayout());
-			//TITRE
-			panel_top.add(jl_title,BorderLayout.EAST);
-			//BOUTONS
-			JPanel panel_buttons = new JPanel();
-			panel_buttons.setLayout(new BorderLayout());
-			panel_top.add(panel_buttons,BorderLayout.CENTER);
-				//ajout des boutons.
-				panel_buttons.add(jb_add,BorderLayout.PAGE_START);
-				panel_buttons.add(jb_del,BorderLayout.PAGE_END);
+		//LA CATEGORY
+		JPanel panel_category = new JPanel();
+		panel_category.setLayout(new BorderLayout());
+		JScrollPane scroll_list_cat = new JScrollPane(list_category);
+		panel_category.add(this.jl_category,BorderLayout.NORTH);
+		panel_category.add(scroll_list_cat,BorderLayout.CENTER);
+		
+		//BORDERLAYOUT NORTH
+		JPanel panel_North = new JPanel();
+		panel_North.setLayout(new BorderLayout());
+		panel_North.add(jl_title,BorderLayout.NORTH);
+		panel_North.add(panel_category,BorderLayout.CENTER);
 		
 		//LES TABLEAUX
-		JPanel tabs = new JPanel();
-		tabs.setLayout(new GridLayout(2,1));
+		JPanel panel_regle = new JPanel();
+		panel_regle.setLayout(new GridLayout(2,1));
 			//PREMISSE
 			JPanel panel_premisse = new JPanel();
 			panel_premisse.setLayout(new BorderLayout());
 			//ajout element
 			panel_premisse.add(jl_premisse,BorderLayout.NORTH);
 			panel_premisse.add(scroll_premisse,BorderLayout.CENTER);
-			tabs.add(panel_premisse);
-			
 			//CONSÉQUENCE
 			JPanel panel_cons = new JPanel();
 			panel_cons.setLayout(new BorderLayout());
 			//ajout élément
 			panel_cons.add(jl_consequence,BorderLayout.NORTH);
 			panel_cons.add(scroll_consequence,BorderLayout.CENTER);
-			tabs.add(panel_cons);
+		panel_regle.add(panel_premisse);
+		panel_regle.add(panel_cons);
 			
 		
+		
 		//ON AJOUTE LES PANNELS SECONDAIRES AU PRINCIPAL
-		this.add(panel_top,BorderLayout.NORTH);//PANEL DU HAUT
-		this.add(tabs,BorderLayout.CENTER);//PANEL TABLEAUX
+		
+
+		JSplitPane split_pane_Vert_1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,panel_North,panel_regle);
+		split_pane_Vert_1.setDividerLocation(150);
+		
+		this.add(split_pane_Vert_1,BorderLayout.CENTER);
+		this.add(jb_add,BorderLayout.SOUTH);
 		
 	}//setUp_UI end
 	
@@ -173,12 +199,32 @@ public class UI_NewRule extends JPanel {
 	}
 	
 	/**
+	 * Renvoyer la catégorie sélectionnée dans la liste
+	 * @return
+	 */
+	public String getCategory(){
+		if(this.list_category.getSelectedElement().size()==0)
+			return null;
+		return this.list_category.getSelectedElement().get(0);
+	}
+	
+	/**
+	 * Mettre à jour la liste des catégories
+	 * @param list_cat
+	 */
+	public void updateCategoryList(List<String> list_cat){
+		this.list_category.setListData(list_cat);
+	}
+	
+	/**
 	 * efface le contenu des TextArea des premisses et des consequences.
 	 */
-	public void clearAllTexts(){
+	public void clearAll(){
 		this.jta_premisse.setText("");
 		this.jta_consequence.setText("");
+		this.list_category.setListData(null);
 	}
+	
 	
 	
 }

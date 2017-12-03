@@ -67,4 +67,19 @@ public class Fait {
     public String toString() {
         return ( ( this.valuation == true ) ? "" : "!" ) + this.label;
     }
+    
+    
+    
+    /**
+     * Renvoyer vrai si le Fait est égal au fait à tester.
+     * Sensible à la valuation.
+     * @param f_toTest
+     * @return
+     */
+    public boolean equalsToFact(Fait f_toTest){
+    	return (this.getLabel().equals(f_toTest.getLabel()) && this.getValuation()==f_toTest.getValuation());
+    }
+    
+    
+    
 }

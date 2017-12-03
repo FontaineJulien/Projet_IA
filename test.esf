@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<System>
+	<regles>
+		<categorie value="bn">
+			<regle>
+			<antecedents>
+					<antecedent value="true">a</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">b</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">b</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">a</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">a</antecedent>
+					<antecedent value="true">b</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">a</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">test</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">ebvsdjk</consequence>
+				</consequences>
+			</regle>
+		</categorie>
+	</regles>
+	<faits>
+	</faits>
+</System>

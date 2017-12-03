@@ -33,7 +33,7 @@ public class UI_NewFact extends JPanel {
 		this.setLayout(new BorderLayout());
 		
 		//LES ÉLÉMENTS
-		jl_title = new JLabel("<html><h3>Ajouter un fait :</h3></html>");//me titre
+		jl_title = new JLabel("<html><h3>Fait :</h3></html>");//me titre
 		jl_title.setHorizontalAlignment(JLabel.CENTER);
 		jl_fact = new JTextField();//le champ input
 			jl_fact.setEditable(true);
