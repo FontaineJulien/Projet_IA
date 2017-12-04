@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<System>
+	<regles>
+		<categorie value="sf">
+			<regle>
+			<antecedents>
+					<antecedent value="true">magie</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">force</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">chevalier</antecedent>
+					<antecedent value="true">force</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">jedi</consequence>
+					<consequence value="true">sith</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">bataille</antecedent>
+					<antecedent value="true">vaisseau</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">bataille_spatiale</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">film</antecedent>
+					<antecedent value="true">jedi</antecedent>
+					<antecedent value="true">bataille_spatiale</antecedent>
+					<antecedent value="true">force</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">star_wars</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">serie</antecedent>
+					<antecedent value="true">bataille_spatiale</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">star_trek</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">film</antecedent>
+					<antecedent value="true">alien</antecedent>
+					<antecedent value="true">predator</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">alien_vs_predator</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">gore</antecedent>
+					<antecedent value="true">monstre</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">alien</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">gore</antecedent>
+					<antecedent value="true">chevalier</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">predator</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">gore</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">zombie</consequence>
+				</consequences>
+			</regle>
+		</categorie>
+		<categorie value="aventure">
+			<regle>
+			<antecedents>
+					<antecedent value="true">film</antecedent>
+					<antecedent value="true">nazgul</antecedent>
+					<antecedent value="true">bataille_epique</antecedent>
+					<antecedent value="true">aventure</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">le_seigneur_des_anneaux</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">serie</antecedent>
+					<antecedent value="true">zombie</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">the_walking_dead</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">bataille</antecedent>
+					<antecedent value="true">medieval</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">bataille_epique</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">bataille</antecedent>
+					<antecedent value="true">vaisseau</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">bataille_spatiale</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">medieval</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">chevalier</consequence>
+				</consequences>
+			</regle>
+		</categorie>
+		<categorie value="fantastique">
+			<regle>
+			<antecedents>
+					<antecedent value="true">film</antecedent>
+					<antecedent value="true">magie</antecedent>
+					<antecedent value="true">monstre</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">harry_potter</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">serie</antecedent>
+					<antecedent value="true">dragon</antecedent>
+					<antecedent value="true">bataille_epique</antecedent>
+					<antecedent value="true">magie</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">game_of_throne</consequence>
+				</consequences>
+			</regle>
+			<regle>
+			<antecedents>
+					<antecedent value="true">dragon</antecedent>
+					<antecedent value="true">chevalier</antecedent>
+				</antecedents>
+				<consequences>
+					<consequence value="true">nazgul</consequence>
+				</consequences>
+			</regle>
+		</categorie>
+	</regles>
+	<faits>
+		<fait value="true">bataille_spatiale</fait>
+		<fait value="true">vaisseau</fait>
+		<fait value="true">film</fait>
+		<fait value="true">chevalier</fait>
+		<fait value="true">the_walking_dead</fait>
+		<fait value="true">jedi</fait>
+		<fait value="true">magie</fait>
+		<fait value="true">star_wars</fait>
+		<fait value="true">force</fait>
+		<fait value="true">sith</fait>
+		<fait value="true">bataille</fait>
+	</faits>
+</System>

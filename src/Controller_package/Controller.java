@@ -193,10 +193,13 @@ public class Controller implements ActionListener,WindowListener {
 		
 		
 		this.printContext(liste_goals);
-		boolean res_test = this.testGoals(liste_goals,liste_category);//TEST MOTEUR	
-		this.printResult(res_test);						//Affcihage des résultats
-		if(res_test)
-			this.ui.panel_Display.updateText_Panel(this.moteur.getAllFacts_StringFormat(), PANEL.FACT);
+		boolean res_test = this.testGoals(liste_goals,liste_category);//TEST MOTEUR
+		this.printResult(res_test);									//Affcihage des résultats
+		
+		this.moteur.clearHistory();									//on efface l'historique moteur
+		this.moteur.clearRequestedFacts();							//on efface la liste des faits requis par le chainage arrière
+		
+		this.ui.panel_Display.updateText_Panel(this.moteur.getAllFacts_StringFormat(), PANEL.FACT);//on met à jour la base de fait.
 	}
 	
 	/**
@@ -213,7 +216,7 @@ public class Controller implements ActionListener,WindowListener {
 			dialogue.setFileSelectionMode(JFileChooser.FILES_ONLY);	//files only
 			dialogue.setAcceptAllFileFilterUsed(false);				
 			dialogue.setFileFilter(									//filtre sur les extensios de fichier
-					new MonFiltre(new String[]{"esf"},"Expert System File(*.esf)"));
+					new MonFiltre(new String[]{"xml"},"Extensible Markup Language(*.xml)"));
 			dialogue.showOpenDialog(null);							//ouverture de la pop-up
 			
 			this.loadSystem(dialogue.getSelectedFile());			//ouverture du fichier
@@ -244,9 +247,9 @@ public class Controller implements ActionListener,WindowListener {
 			dialogue.setDialogTitle("Enregistrer un System Expert :");
 			dialogue.setFileSelectionMode(JFileChooser.FILES_ONLY);//files only
 			dialogue.setAcceptAllFileFilterUsed(false);
-			dialogue.setFileFilter(//file like *.esf
+			dialogue.setFileFilter(//file like *.xml
 					new MonFiltre(
-							new String[]{"esf"},"Expert System File(*.esf)")
+							new String[]{"xml"},"Extensible Markup Language(*.xml)")
 					);
 			//ouverture de la pop up
 			dialogue.showOpenDialog(null);
@@ -254,7 +257,7 @@ public class Controller implements ActionListener,WindowListener {
 			if(dialogue.getSelectedFile()==null)		//si le fichier choisit est null
 				{this.moteurIsSaved=false;return false;}//on renvoit faux
 			
-			File le_file = new File(dialogue.getSelectedFile()+".esf");
+			File le_file = new File(dialogue.getSelectedFile()+".xml");
 			this.moteur.setSystemFile(le_file);
 			this.moteur.getSystemFile().createNewFile();
 			//on appelle le controller avec le nom de fichier obtenu
@@ -501,11 +504,6 @@ public class Controller implements ActionListener,WindowListener {
 	 * @param les_goals
 	 */
 	private void printResult(boolean res_test){
-		//les règles
-		this.ui.panel_Display.addText_Panel("\n\nRègles : ",PANEL.RESULT);
-		List<String> liste_regles = this.moteur.getRules_ToListString_WithCategories();
-		for(int i=0;i<liste_regles.size();i++)
-			this.ui.panel_Display.addText_Panel(liste_regles.get(i).toString(), PANEL.RESULT);
 		
 		//historique
 		this.ui.panel_Display.addText_Panel("\nHisorique : ",PANEL.RESULT);
@@ -518,10 +516,14 @@ public class Controller implements ActionListener,WindowListener {
 		this.ui.panel_Display.addText_Panel("\nResultat : "+res.toUpperCase()+"",PANEL.RESULT);
 		if(res_test)
 			this.ui.panel_Display.addText_Panel("\nLe(s) mot(s) ont/a été ajouté(s) dans la base de Faits.\n(Sauf si déjà présent(s))", PANEL.RESULT);
+		else if(res_test==false 											//SI le résultat du test est 'faux' ET le mode est 'backward' ET le fait demandé existe dans le moteur 
+				&& this.moteur.getRequestedFacts().size()!=0)
+			this.ui.panel_Display.addText_Panel("\nPour atteindre le but les faits suivants sont nécessaires : "+this.moteur.getRequestedFacts().toString(), PANEL.RESULT);
+		
 		
 		this.ui.panel_Display.setActivePanel(PANEL.RESULT);
 					
-		this.moteur.clearHistory();
+		
 	}
 	
 	

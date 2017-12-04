@@ -11,22 +11,19 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Scanner;
+//import java.util.Scanner;
 
-/* 
- *
- * TODO : Cohérence
- * 
- */
+
 
 public class Moteur {
 
-    private BaseDeRegles BR;
-    private BaseDeFaits  BF;
-    private BaseDeCategory BC;
-    private Demandables  demandables;
-    private History      history;
-    private File         SystemFile;
+    private BaseDeRegles BR;				//LA BASE DE REGLES
+    private BaseDeFaits  BF;				//LA BASE DE FAITS
+    private BaseDeCategory BC;				//LA BASE DE CATEGORIE
+    private Demandables  demandables;		//LES DEMANDABLES
+    private History      history;			//L'HISTORIQUE DES INFÉRENCES
+    private File         SystemFile;		//le fichier de sauvegarde
+	private List<Fait> FactsRequested;		//LA LISTE DES FAITS MANQUANTS (utilisée par le chaînage arrière)
 
     /**
      * Constructeur.
@@ -37,6 +34,7 @@ public class Moteur {
         this.BC = new BaseDeCategory();
         this.demandables = new Demandables();
         this.history = new History();
+        this.FactsRequested = new ArrayList<Fait>();
     }
 
     /**
@@ -52,6 +50,7 @@ public class Moteur {
         BC.read(rules_file);
         this.demandables = BR.read( rules_file );
         this.history = new History();
+        this.FactsRequested = new ArrayList<Fait>();
     }
 
     /*
@@ -337,50 +336,7 @@ public class Moteur {
         return verif;
     }
 
-    private boolean ask( Fait goal ) {
-        boolean keep_asking = true;
-        String answer;
-        boolean bool_answer = true;
-        String goal_string;
-        if ( goal.getValuation() )
-            goal_string = goal.getLabel();
-        else
-            goal_string = "!" + goal.getLabel();
 
-        @SuppressWarnings( "resource" )
-        /*
-         * Note : Fermer le Scanner ferme aussi son flux entrant (ie System.in)
-         * ce qui lève un NoSuchElementException si on redemande un entrant sur
-         * ce flux qui n'existe plus.
-         * 
-         * => On ne ferme pas le scanner pour assurer le bon fonctionnement du
-         * processus
-         * 
-         */
-        Scanner scan = new Scanner( System.in );
-
-        System.out
-                .println( "Voulez vous faire entrer le but \"" + goal_string + "\" dans la base de faits ? (Oui/Non)" );
-
-        while ( keep_asking ) {
-            answer = scan.next();
-            if ( answer.toLowerCase().equals( "oui" ) || answer.toLowerCase().startsWith( "o" ) ) {
-                keep_asking = false;
-                bool_answer = true;
-            } else {
-                if ( answer.toLowerCase().equals( "non" ) || answer.toLowerCase().startsWith( "n" ) ) {
-                    keep_asking = false;
-                    bool_answer = false;
-                } else {
-                    System.out.println( "La réponse n'est pas valide. Voulez vous faire entrer le but \"" + goal_string
-                            + "\" dans la base de faits ? (Oui/Non)" );
-                }
-            }
-
-        }
-
-        return bool_answer;
-    }
 
     private boolean verification( Fait goal ) {
         boolean dem = false;
@@ -410,9 +366,12 @@ public class Moteur {
             }
         }
 
-        // 3em cas : Sinon voir si b est demandable
+        // 3em cas : Ajouter goal à la liste de faits Requis pour atteindre le but
         if ( dem == false && demandables.contains( goal ) ) {
-            dem = ask( goal );
+            {
+            	this.FactsRequested.add(goal);
+            	return false;
+            }
         }
 
         if ( dem ) {
@@ -421,10 +380,76 @@ public class Moteur {
 
         return dem;
     }
+    
+    /* PREVIOUS METHOD
+     *  
+    private boolean ask( Fait goal ) {
+        boolean keep_asking = true;
+        String answer;
+        boolean bool_answer = true;
+        String goal_string;
+        if ( goal.getValuation() )
+            goal_string = goal.getLabel();
+        else
+            goal_string = "!" + goal.getLabel();
+
+        @SuppressWarnings( "resource" )
+        //
+        // Note : Fermer le Scanner ferme aussi son flux entrant (ie System.in)
+        // ce qui lève un NoSuchElementException si on redemande un entrant sur
+        // ce flux qui n'existe plus.
+        // 
+        // => On ne ferme pas le scanner pour assurer le bon fonctionnement du
+        // processus
+        // 
+        //
+        Scanner scan = new Scanner( System.in );
+
+        System.out
+                .println( "Voulez vous faire entrer le but \"" + goal_string + "\" dans la base de faits ? (Oui/Non)" );
+
+        while ( keep_asking ) {
+            answer = scan.next();
+            if ( answer.toLowerCase().equals( "oui" ) || answer.toLowerCase().startsWith( "o" ) ) {
+                keep_asking = false;
+                bool_answer = true;
+            } else {
+                if ( answer.toLowerCase().equals( "non" ) || answer.toLowerCase().startsWith( "n" ) ) {
+                    keep_asking = false;
+                    bool_answer = false;
+                } else {
+                    System.out.println( "La réponse n'est pas valide. Voulez vous faire entrer le but \"" + goal_string
+                            + "\" dans la base de faits ? (Oui/Non)" );
+                }
+            }
+
+        }
+
+        return bool_answer;
+    }
+    */
 
     /******************************************
      * METHODES POUR LE CONTROLLER
      */
+    
+    /**
+     * renvoyer les faits requested. (Nécessaire dans le cas du chaînage arrière lors d'un conflit).
+     * @return
+     */
+    public List<Fait> getRequestedFacts(){
+    	return this.FactsRequested;
+    }
+    
+   
+    /**
+     * Vide la list des faits demandés pour le chaineage arrière
+     */
+    public void clearRequestedFacts(){
+    	this.FactsRequested.clear();
+    }
+    
+    
 
     /**
      * Ajouter un fait dans la base de Faits. Si la premiere lettre de fait est
